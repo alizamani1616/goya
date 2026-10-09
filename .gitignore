@@ -6,3 +6,6 @@ dist/
 .venv/
 venv/
 .pytest_cache/
+
+_icons-preview.png
+_flag-check.png
