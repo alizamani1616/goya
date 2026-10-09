@@ -3,6 +3,10 @@
 
 import contextlib
 import io
+import os
+
+# تست‌های GUI هیچ پنجره‌ای باز نمی‌کنند — بک‌اند ساختگی
+os.environ.setdefault("GOYA_HEADLESS", "1")
 
 from goya.errors import GoyaError
 from goya.interpreter import Interpreter

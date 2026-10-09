@@ -281,5 +281,9 @@ class Lexer:
                 self._emit("OP", ":", i)
                 i += 1
                 continue
+            if c == ".":
+                self._emit("OP", ".", i)
+                i += 1
+                continue
 
             self._error('کاراکتر ناشناخته "{}"'.format(c))

@@ -3,10 +3,11 @@
 
 import time
 
-from .errors import GoyaRuntimeError
+from .errors import GoyaPropError, GoyaRuntimeError
 from .parser import (
-    Assign, Bin, Break, Call, Const, Continue, ExprStmt, ForIn, ForRange,
-    FuncDef, If, Index, ListLit, Name, Num, Return, Str, Un, While,
+    Assign, Attr, AttrAssign, Bin, Break, Call, Const, Continue, ExprStmt,
+    ForIn, ForRange, FuncDef, If, Index, ListLit, Name, Num, Return, Str, Un,
+    While,
 )
 from .stdlib import Builtin, install_builtins
 
@@ -98,6 +99,8 @@ class Interpreter:
             raise GoyaRuntimeError("«بشکن» فقط داخل حلقه معنی داره")
         except ContinueSignal:
             raise GoyaRuntimeError("«ادامه» فقط داخل حلقه معنی داره")
+        from .gui import finish_gui_if_active
+        finish_gui_if_active(self)
 
     def evaluate(self, expr, env=None):
         return self.eval_expr(expr, env or self.global_env)
@@ -111,7 +114,14 @@ class Interpreter:
         if isinstance(st, ExprStmt):
             self.eval_expr(st.expr, env)
         elif isinstance(st, Assign):
-            env.assign(st.name, self.eval_expr(st.expr, env), st.line)
+            value = self.eval_expr(st.expr, env)
+            env.assign(st.name, value, st.line)
+            tag = getattr(value, "goya_set_name", None)
+            if callable(tag):
+                tag(st.name)
+        elif isinstance(st, AttrAssign):
+            obj = self.eval_expr(st.obj, env)
+            self._set_attr(obj, st.name, self.eval_expr(st.expr, env), st.line)
         elif isinstance(st, If):
             self._exec_if(st, env)
         elif isinstance(st, While):
@@ -210,7 +220,33 @@ class Interpreter:
             return self._eval_call(e, env)
         if isinstance(e, Index):
             return self._eval_index(e, env)
+        if isinstance(e, Attr):
+            obj = self.eval_expr(e.obj, env)
+            return self._get_attr(obj, e.name, e.line)
         raise GoyaRuntimeError("عبارت ناشناخته")
+
+    def _get_attr(self, obj, name, line=None):
+        getter = getattr(obj, "goya_get", None)
+        if callable(getter):
+            try:
+                return getter(name)
+            except GoyaPropError as e:
+                raise GoyaRuntimeError(str(e), line)
+        raise GoyaRuntimeError(
+            "این مقدار ویژگی «{}» نداره".format(name), line
+        )
+
+    def _set_attr(self, obj, name, value, line=None):
+        setter = getattr(obj, "goya_set", None)
+        if callable(setter):
+            try:
+                setter(name, value)
+                return
+            except GoyaPropError as e:
+                raise GoyaRuntimeError(str(e), line)
+        raise GoyaRuntimeError(
+            "به این مقدار نمی‌شه ویژگی «{}» داد".format(name), line
+        )
 
     def _eval_un(self, e, env):
         v = self.eval_expr(e.operand, env)
@@ -298,18 +334,14 @@ class Interpreter:
             return left > right
         return left >= right
 
-    def _eval_call(self, e, env):
-        func = self.eval_expr(e.func, env)
-        args = [self.eval_expr(a, env) for a in e.args]
+    def call_function(self, func, args, line=None):
+        """فراخوانی مستقیم یک مقدار تابع — موتور GUI برای رویدادها استفاده می‌کنه"""
         if isinstance(func, Function):
             if len(args) != len(func.params):
                 raise GoyaRuntimeError(
                     'تابع «{}» به {} ورودی نیاز داره ولی {} تا داده شد'.format(
-                        func.name,
-                        self._fa(len(func.params)),
-                        self._fa(len(args)),
-                    ),
-                    e.line,
+                        func.name, self._fa(len(func.params)), self._fa(len(args))
+                    ), line,
                 )
             call_env = Env(func.closure)
             for pname, value in zip(func.params, args):
@@ -320,11 +352,11 @@ class Interpreter:
                 return r.value
             except BreakSignal:
                 raise GoyaRuntimeError(
-                    "«بشکن» داخل تابع، بیرون از حلقه‌ست", e.line
+                    "«بشکن» داخل تابع، بیرون از حلقه‌ست", line
                 )
             except ContinueSignal:
                 raise GoyaRuntimeError(
-                    "«ادامه» داخل تابع، بیرون از حلقه‌ست", e.line
+                    "«ادامه» داخل تابع، بیرون از حلقه‌ست", line
                 )
             return None
         if isinstance(func, Builtin):
@@ -332,9 +364,14 @@ class Interpreter:
                 return func.fn(args)
             except GoyaRuntimeError as err:
                 if err.line is None:
-                    err.line = e.line
+                    err.line = line
                 raise
-        raise GoyaRuntimeError("این یه تابع نیست که بشه صدا زد", e.line)
+        raise GoyaRuntimeError("این یه تابع نیست که بشه صدا زد", line)
+
+    def _eval_call(self, e, env):
+        func = self.eval_expr(e.func, env)
+        args = [self.eval_expr(a, env) for a in e.args]
+        return self.call_function(func, args, e.line)
 
     def _eval_index(self, e, env):
         obj = self.eval_expr(e.obj, env)
