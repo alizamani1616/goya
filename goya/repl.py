@@ -37,9 +37,11 @@ def _try_entry(interp, source):
 
 
 def start():
-    print("گویا {} — زبان برنامه‌نویسی فارسی".format(
-        to_persian_digits("0.1.0")
-    ))
+    import os
+    if os.name == "nt":
+        os.system("")  # رنگ ANSI در ویندوز
+    print("\033[96mگویا " + to_persian_digits("0.1.0") +
+          " — زبان برنامه‌نویسی فارسی\033[0m")
     print("برای خروج: Ctrl+C یا Ctrl+Z و بعد Enter")
     print()
     interp = Interpreter()

@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="assets/goya-logo.png" alt="گویا — Goya" width="520">
+</div>
+
 # گویا (Goya) 🇮🇷
 
 > **گویا — زبانی که حرف می‌زنه.**
@@ -107,6 +111,17 @@ indentation-based (no braces, no semicolons) so Persian typing stays smooth.
 The interpreter is written in pure Python and can be frozen into a single
 portable `goya.exe` with PyInstaller. Roadmap: VB-style visual form builder,
 drag-and-drop designer, and a batteries-included standard library.
+
+## 🎨 هویت بصری
+
+| رنگ | کد | کاربرد |
+|------|-----|--------|
+| فیروزه‌ای | `#0F766E` | رنگ اصلی برند و دکمه‌ها |
+| بنفش | `#7C3AED` | تأکیدها و عناصر ویژه |
+| سرمه‌ای | `#111827` | زمینه تیره و متن در تم روشن |
+| سفید یخی | `#F8FAFC` | زمینه روشن و متن در تم تیره |
+| فیروزه‌ای روشن | `#2DD4BF` | لینک‌ها و تأکیدها در تم تیره |
+| خاکستری روشن | `#CBD5E1` | متن‌های فرعی در تم تیره |
 
 ## 📄 لایسنس
 

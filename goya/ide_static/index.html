@@ -4,47 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>گویا — محیط برنامه‌نویسی فارسی</title>
+<link rel="icon" type="image/png" href="/favicon.png">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<!-- فونت آنلاین اختیاریه: اگر کند بود، صفحه با فونت جایگزین فوری رندر می‌شه -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css"></noscript>
 <style>
 :root{
-  --bg:#f6efe2; --card:#fffdf7; --text:#3b3128; --muted:#8a7d6d;
-  --code-bg:#fffcf5; --caret:#c2410c; --sel:rgba(217,119,6,.20);
-  --kw:#d97706; --built:#7c3aed; --str:#059669; --num:#2563eb;
-  --cmt:#a29b8c; --opw:#0f766e; --plain:#413a30;
-  --term-bg:#191f26; --term-text:#e7e5e0; --err-bg:#3d0c0c; --err-text:#fecaca;
-  --accent:#ea7317; --accent2:#c2410c;
+  --bg:#F8FAFC; --card:#ffffff; --text:#111827; --muted:#64748B;
+  --code-bg:#FDFEFF; --caret:#0F766E; --sel:rgba(15,118,110,.16);
+  --kw:#0F766E; --built:#7C3AED; --str:#047857; --num:#2563EB;
+  --cmt:#94A3B8; --opw:#0D9488; --plain:#1F2937;
+  --term-bg:#111827; --term-text:#F8FAFC; --err-bg:#3F1D21; --err-text:#FECACA;
+  --brand:#0F766E; --brand-light:#2DD4BF; --purple:#7C3AED;
+  --line:rgba(17,24,39,.10);
   --code-size:17px;
 }
 [data-theme="dark"]{
-  --bg:#12161b; --card:#1a2026; --text:#e6e1d8; --muted:#8b93a0;
-  --code-bg:#151a20; --caret:#fbbf24; --sel:rgba(251,191,36,.22);
-  --kw:#fbbf24; --built:#c084fc; --str:#34d399; --num:#60a5fa;
-  --cmt:#6b7280; --opw:#2dd4bf; --plain:#d7d3cb;
+  --bg:#111827; --card:#18213A; --text:#F8FAFC; --muted:#CBD5E1;
+  --code-bg:#0E1626; --caret:#2DD4BF; --sel:rgba(45,212,191,.20);
+  --kw:#2DD4BF; --built:#A78BFA; --str:#34D399; --num:#60A5FA;
+  --cmt:#64748B; --opw:#5EEAD4; --plain:#E2E8F0;
+  --line:rgba(248,250,252,.09);
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Vazirmatn,'Segoe UI',Tahoma,sans-serif;transition:background .25s}
-header{background:linear-gradient(135deg,#f8b84a,#ea7317 55%,#d94f10);color:#fff;padding:14px 26px;display:flex;align-items:center;gap:16px;box-shadow:0 3px 14px rgba(120,60,0,.25)}
-.logo{font-size:27px;font-weight:800;letter-spacing:-.5px;text-shadow:0 2px 6px rgba(0,0,0,.18)}
-.tagline{opacity:.92;font-size:14px}
+header{background:#111827;color:#F8FAFC;padding:12px 26px;display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--brand)}
+.logo-mark{height:46px;display:block}
+.logo{font-size:28px;font-weight:800;letter-spacing:-.5px;color:#F8FAFC}
+.tagline{color:#CBD5E1;font-size:14px}
 .spacer{flex:1}
 .chip{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:999px;padding:7px 16px;font-family:inherit;font-size:14px;cursor:pointer;transition:.15s}
 .chip:hover{background:rgba(255,255,255,.32)}
 main{max-width:1440px;margin:0 auto;padding:18px;display:grid;grid-template-columns:1.55fr .95fr;gap:16px}
 .card{background:var(--card);border-radius:18px;box-shadow:0 5px 22px rgba(70,45,10,.09);overflow:hidden}
-.card h2{margin:0;padding:13px 18px;font-size:15px;border-bottom:1px solid rgba(120,90,40,.12);display:flex;align-items:center;gap:8px}
+.card h2{margin:0;padding:13px 18px;font-size:15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
 /* ───── نوار ابزار ───── */
-.toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;flex-wrap:wrap;border-bottom:1px solid rgba(120,90,40,.12)}
-.btn-run{background:linear-gradient(135deg,#22c55e,#15803d);color:#fff;border:0;border-radius:12px;padding:10px 22px;font:700 15px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;box-shadow:0 3px 10px rgba(21,128,61,.35);transition:.15s}
-.btn-run:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(21,128,61,.45)}
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.btn-run{background:var(--brand);color:#fff;border:0;border-radius:12px;padding:10px 22px;font:700 15px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;box-shadow:0 3px 10px rgba(15,118,110,.35);transition:.15s}
+.btn-run:hover{background:#0D9488;transform:translateY(-1px);box-shadow:0 5px 14px rgba(15,118,110,.45)}
 .btn-run:disabled{opacity:.55;cursor:wait}
 .kbd{font-size:11px;opacity:.8;font-weight:400}
-select{font:14px Vazirmatn,'Segoe UI',Tahoma;padding:8px 12px;border-radius:10px;border:1.5px solid rgba(120,90,40,.25);background:var(--code-bg);color:var(--text);cursor:pointer}
+select{font:14px Vazirmatn,'Segoe UI',Tahoma;padding:8px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--code-bg);color:var(--text);cursor:pointer}
 .font-ctl{display:flex;gap:4px}
-.font-ctl button{border:1.5px solid rgba(120,90,40,.25);background:var(--code-bg);color:var(--text);border-radius:8px;width:32px;height:32px;font-size:14px;cursor:pointer}
+.font-ctl button{border:1.5px solid var(--line);background:var(--code-bg);color:var(--text);border-radius:8px;width:32px;height:32px;font-size:14px;cursor:pointer}
 /* ───── ویرایشگر ───── */
 .editor-wrap{display:flex;height:540px;background:var(--code-bg)}
-.gutter{width:46px;padding:14px 6px 14px 0;text-align:center;color:var(--muted);font:500 var(--code-size)/1.9 Vazirmatn,'Segoe UI',Tahoma;overflow:hidden;user-select:none;background:rgba(120,90,40,.05);flex-shrink:0}
+.gutter{width:46px;padding:14px 6px 14px 0;text-align:center;color:var(--muted);font:500 var(--code-size)/1.9 Vazirmatn,'Segoe UI',Tahoma;overflow:hidden;user-select:none;background:rgba(15,118,110,.06);flex-shrink:0}
 .code-area{position:relative;flex:1;direction:rtl}
 .code-layer{margin:0;padding:14px 16px 14px 16px;font:500 var(--code-size)/1.9 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;word-wrap:break-word;direction:rtl;text-align:right;border:0;letter-spacing:0}
 #hl{position:absolute;inset:0;overflow:hidden;pointer-events:none;color:var(--plain)}
@@ -57,11 +63,11 @@ select{font:14px Vazirmatn,'Segoe UI',Tahoma;padding:8px 12px;border-radius:10px
 .tk-cmt{color:var(--cmt);font-style:italic}
 .tk-opw{color:var(--opw);font-weight:700}
 /* ───── قالب‌ها (پیشنهادگر) ───── */
-#chips{display:flex;gap:6px;flex-wrap:wrap;padding:9px 14px;border-top:1px solid rgba(120,90,40,.12);min-height:20px}
-.tpl-btn{background:linear-gradient(135deg,rgba(234,115,23,.12),rgba(194,65,12,.10));border:1.5px dashed rgba(234,115,23,.5);color:var(--accent2);border-radius:999px;padding:5px 14px;font:600 13px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;transition:.13s}
-.tpl-btn:hover{background:var(--accent);color:#fff;border-style:solid}
-[data-theme="dark"] .tpl-btn{color:#fbbf24;border-color:rgba(251,191,36,.45)}
-[data-theme="dark"] .tpl-btn:hover{color:#1a2026;background:#fbbf24}
+#chips{display:flex;gap:6px;flex-wrap:wrap;padding:9px 14px;border-top:1px solid var(--line);min-height:20px}
+.tpl-btn{background:rgba(124,58,237,.07);border:1.5px dashed rgba(124,58,237,.45);color:var(--purple);border-radius:999px;padding:5px 14px;font:600 13px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;transition:.13s}
+.tpl-btn:hover{background:var(--purple);color:#fff;border-style:solid}
+[data-theme="dark"] .tpl-btn{color:#A78BFA;border-color:rgba(167,139,250,.5)}
+[data-theme="dark"] .tpl-btn:hover{color:#111827;background:#A78BFA}
 /* ───── خروجی ───── */
 .out-card{grid-column:1}
 #out{margin:0;padding:16px 18px;background:var(--term-bg);color:var(--term-text);font:500 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;direction:rtl;text-align:right;min-height:130px;max-height:320px;overflow:auto}
@@ -69,17 +75,18 @@ select{font:14px Vazirmatn,'Segoe UI',Tahoma;padding:8px 12px;border-radius:10px
 .meta{display:flex;gap:10px;align-items:center;padding:0 16px 12px;color:var(--muted);font-size:13px}
 /* ───── ستون کنار ───── */
 .side{display:flex;flex-direction:column;gap:16px}
-textarea.inputs{width:100%;height:110px;border:0;border-top:1px solid rgba(120,90,40,.12);background:var(--code-bg);color:var(--text);font:500 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;padding:12px 16px;resize:vertical;outline:none;direction:rtl}
+textarea.inputs{width:100%;height:110px;border:0;border-top:1px solid var(--line);background:var(--code-bg);color:var(--text);font:500 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;padding:12px 16px;resize:vertical;outline:none;direction:rtl}
 .hint{padding:6px 18px 16px;font-size:13.5px;line-height:2;color:var(--muted)}
 .hint b{color:var(--text)}
 .hint .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-left:6px;vertical-align:-1px}
 .d-kw{background:var(--kw)}.d-built{background:var(--built)}.d-str{background:var(--str)}.d-num{background:var(--num)}.d-opw{background:var(--opw)}.d-cmt{background:var(--cmt)}
-.statusbar{display:flex;justify-content:space-between;padding:8px 16px;font-size:12.5px;color:var(--muted);border-top:1px solid rgba(120,90,40,.12)}
+.statusbar{display:flex;justify-content:space-between;padding:8px 16px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line)}
 @media(max-width:1000px){main{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header>
+  <img class="logo-mark" src="/logo-mark.png" alt="نشان گویا">
   <div class="logo">گویا</div>
   <div class="tagline">زبانی که حرف می‌زنه — بنویس، F5 بزن، بالا بیاد</div>
   <div class="spacer"></div>

@@ -8,9 +8,17 @@
 """
 
 import argparse
+import os
 import sys
 
 from . import __version__
+
+if os.name == "nt":
+    os.system("")  # فعال‌سازی رنگ ANSI در ترمینال ویندوز
+
+_TEAL = "\033[96m"
+_RED = "\033[91m"
+_OFF = "\033[0m"
 
 
 def _run_file(path):
@@ -31,10 +39,10 @@ def _run_file(path):
         program = Parser(tokens).parse()
         Interpreter().run(program)
     except GoyaError as e:
-        print(show_error(e, source))
+        print(_RED + show_error(e, source) + _OFF)
         return 1
     except RecursionError:
-        print("خطای اجرا: تابع‌ها خیلی تو در تو صدا زده شدن (بازگشت بی‌پایان؟)")
+        print(_RED + "خطای اجرا: تابع‌ها خیلی تو در تو صدا زده شدن (بازگشت بی‌پایان؟)" + _OFF)
         return 1
     return 0
 
