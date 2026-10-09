@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>گویا — زبان برنامه‌نویسی فارسی</title>
+<meta name="description" content="گویا — زبانی که حرف می‌زنه. اولین زبان برنامه‌نویسی واقعی فارسی: کلیدواژه فارسی، اعداد فارسی، خطای فارسی، تاریخ شمسی توکار.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css"></noscript>
+<style>
+:root{
+  --bg:#FFF3E4; --card:#ffffff; --text:#1E2A4A; --muted:#8A93A6;
+  --purple:#7048E8; --purple2:#9775FA; --coral:#E5484D;
+  --tint-blue:#E3F2FF; --tint-violet:#F1EDFF; --tint-yellow:#FFF6DC; --tint-mint:#E4FAF0;
+  --kw:#E5484D; --built:#7048E8; --str:#0CA678; --num:#3B82F6;
+  --cmt:#9AA3B8; --opw:#F76707; --plain:#1E2A4A;
+  --line:rgba(30,42,74,.10);
+}
+[data-theme="dark"]{
+  --bg:#111827; --card:#18213A; --text:#F8FAFC; --muted:#CBD5E1;
+  --tint-blue:#17263F; --tint-violet:#221E44; --tint-yellow:#2B2517; --tint-mint:#113227;
+  --kw:#FF8787; --built:#9775FA; --str:#38D9A9; --num:#74C0FC;
+  --cmt:#64748B; --opw:#FFA94D; --plain:#E2E8F0;
+  --line:rgba(248,250,252,.09);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Vazirmatn,'Segoe UI',Tahoma,sans-serif;min-height:100vh}
+.deco{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.deco svg,.deco .d-dots{position:absolute}
+[data-theme="dark"] .deco{opacity:.14}
+.d-sun{left:-34px;top:26px}
+.d-cloud1{left:230px;top:16px}
+.d-cloud2{right:300px;top:88px;transform:scale(.62)}
+.d-squiggle{right:52px;top:44%}
+.d-leaf1{left:-26px;bottom:56px}
+.d-leaf2{right:-30px;bottom:110px;transform:scaleX(-1)}
+.d-corner{right:0;bottom:0;width:170px;height:170px;background:#FFE3CE;border-top-left-radius:100%}
+[data-theme="dark"] .d-corner{background:#1B2542}
+.d-dots{width:92px;height:64px;background-image:radial-gradient(circle,#FFD43B 4.5px,transparent 5px);background-size:23px 21px;opacity:.9}
+.d-dots1{left:320px;top:24px}
+.d-dots2{left:44px;bottom:200px;background-image:radial-gradient(circle,#C3B8FF 4.5px,transparent 5px)}
+.d-spark{right:230px;top:170px}
+
+header{position:relative;z-index:1;display:flex;align-items:center;gap:16px;padding:18px 30px 6px}
+.logo-img{height:72px;display:block;filter:drop-shadow(0 3px 8px rgba(112,72,232,.18))}
+.spacer{flex:1}
+.chip{background:#fff;border:1.5px solid var(--line);color:var(--text);border-radius:999px;padding:8px 18px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(112,72,232,.10);transition:.15s;text-decoration:none;display:inline-block}
+.chip:hover{border-color:var(--purple2)}
+.chip.purple{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;border:0}
+
+main{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:0 22px 40px}
+.hero{text-align:center;padding:26px 0 10px}
+.hero h1{font-size:42px;margin:10px 0 6px;font-weight:900}
+.hero h1 .g{color:var(--coral)}.hero h1 .o{color:var(--purple)}
+.hero p.sub{font-size:18px;color:var(--muted);margin:0 0 22px;font-weight:600}
+.hero p.desc{font-size:16.5px;line-height:2.1;max-width:720px;margin:0 auto 26px}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{border-radius:14px;padding:13px 26px;font:700 15.5px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;text-decoration:none;display:inline-block;transition:.15s}
+.btn-purple{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;box-shadow:0 4px 14px rgba(112,72,232,.35)}
+.btn-purple:hover{transform:translateY(-1px)}
+.btn-ghost{background:var(--card);color:var(--text);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--purple2)}
+
+h2.sec{font-size:26px;font-weight:900;margin:52px 0 8px;text-align:center}
+p.secsub{text-align:center;color:var(--muted);margin:0 0 22px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.feat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 4px 18px rgba(112,72,232,.07)}
+.feat .ic{font-size:26px}
+.feat b{display:block;font-size:16px;margin:6px 0 4px}
+.feat p{margin:0;font-size:14px;line-height:1.9;color:var(--muted)}
+
+.code-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 6px 24px rgba(112,72,232,.08);max-width:760px;margin:0 auto}
+.code-card .bar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);font-weight:600}
+.code-card pre{margin:0;padding:18px 20px;font:500 16px/2.05 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;direction:rtl;text-align:right;color:var(--plain)}
+.tk-kw{color:var(--kw);font-weight:800}
+.tk-built{color:var(--built);font-weight:800}
+.tk-str{color:var(--str);font-weight:600}
+.tk-num{color:var(--num);font-weight:700}
+.tk-cmt{color:var(--cmt);font-style:italic}
+.tk-opw{color:var(--opw);font-weight:700}
+.out-demo{margin:0 16px 16px;padding:12px 16px;background:var(--tint-mint);border-radius:12px;font-weight:700;direction:rtl;text-align:right}
+.out-demo small{display:block;color:var(--muted);font-weight:600;margin-bottom:4px}
+
+table.kw{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;font-size:14.5px}
+table.kw th,table.kw td{padding:9px 16px;text-align:right;border-bottom:1px solid var(--line)}
+table.kw th{background:var(--tint-violet);font-weight:800}
+table.kw tr:last-child td{border-bottom:0}
+table.kw code{background:var(--tint-violet);border-radius:6px;padding:2px 8px;font-family:inherit;font-weight:700;color:var(--purple)}
+
+.install{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 24px;max-width:760px;margin:0 auto}
+.install pre{background:#111827;color:#E2E8F0;border-radius:12px;padding:16px 20px;font:500 14.5px/2 Consolas,Menlo,monospace;direction:ltr;text-align:left;overflow:auto}
+.install .cmd{color:#7EE2B8}
+.install .cmt{color:#7B8794}
+.steps{line-height:2.1;font-size:15px}
+
+.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;max-width:900px;margin:0 auto}
+.phase{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.phase .n{display:inline-block;background:var(--tint-violet);color:var(--purple);font-weight:800;border-radius:999px;padding:2px 12px;font-size:13px;margin-bottom:8px}
+.phase b{display:block;margin-bottom:4px}
+.phase p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.9}
+.phase.done{border-color:#38D9A9;background:var(--tint-mint)}
+
+footer{position:relative;z-index:1;text-align:center;padding:30px 20px 34px;color:var(--muted);font-size:14px;line-height:2.2}
+footer a{color:var(--purple);text-decoration:none;font-weight:700}
+@media(max-width:700px){.hero h1{font-size:32px}}
+</style>
+</head>
+<body>
+
+<div class="deco" aria-hidden="true">
+  <svg class="d-sun" width="170" height="170" viewBox="0 0 170 170">
+    <g fill="#FFD43B">
+      <circle cx="85" cy="85" r="52"/>
+      <rect x="80" y="4" width="10" height="22" rx="5"/><rect x="80" y="144" width="10" height="22" rx="5"/>
+      <rect x="4" y="80" width="22" height="10" rx="5"/><rect x="144" y="80" width="22" height="10" rx="5"/>
+      <rect x="26" y="26" width="10" height="22" rx="5" transform="rotate(-45 31 37)"/>
+      <rect x="134" y="26" width="10" height="22" rx="5" transform="rotate(45 139 37)"/>
+      <rect x="26" y="122" width="10" height="22" rx="5" transform="rotate(45 31 133)"/>
+      <rect x="134" y="122" width="10" height="22" rx="5" transform="rotate(-45 139 133)"/>
+    </g>
+    <circle cx="70" cy="80" r="5" fill="#7A5C00"/><circle cx="100" cy="80" r="5" fill="#7A5C00"/>
+    <path d="M70 100 Q85 114 100 100" stroke="#7A5C00" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <svg class="d-cloud1" width="180" height="70" viewBox="0 0 180 70">
+    <g fill="#C9E7FF"><circle cx="50" cy="45" r="26"/><circle cx="90" cy="32" r="32"/><circle cx="132" cy="46" r="24"/><rect x="40" y="42" width="100" height="26" rx="13"/></g>
+  </svg>
+  <svg class="d-cloud2" width="180" height="70" viewBox="0 0 180 70">
+    <g fill="#DCEBFF"><circle cx="50" cy="45" r="26"/><circle cx="90" cy="32" r="32"/><circle cx="132" cy="46" r="24"/><rect x="40" y="42" width="100" height="26" rx="13"/></g>
+  </svg>
+  <svg class="d-squiggle" width="46" height="170" viewBox="0 0 46 170">
+    <path d="M23 6 C43 30 3 52 23 76 C43 100 3 122 23 146" stroke="#C3B8FF" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="1 16"/>
+  </svg>
+  <svg class="d-leaf1" width="130" height="120" viewBox="0 0 130 120">
+    <ellipse cx="45" cy="70" rx="22" ry="46" fill="#63E6BE" transform="rotate(28 45 70)"/>
+    <ellipse cx="88" cy="52" rx="17" ry="38" fill="#96F2D7" transform="rotate(-18 88 52)"/>
+  </svg>
+  <svg class="d-leaf2" width="130" height="120" viewBox="0 0 130 120">
+    <ellipse cx="45" cy="70" rx="22" ry="46" fill="#63E6BE" transform="rotate(28 45 70)"/>
+    <ellipse cx="88" cy="52" rx="17" ry="38" fill="#96F2D7" transform="rotate(-18 88 52)"/>
+  </svg>
+  <div class="d-dots d-dots1"></div>
+  <div class="d-dots d-dots2"></div>
+  <svg class="d-spark" width="40" height="40" viewBox="0 0 40 40">
+    <path d="M20 2 L24 16 L38 20 L24 24 L20 38 L16 24 L2 20 L16 16 Z" fill="#FFD43B"/>
+  </svg>
+  <div class="d-corner"></div>
+</div>
+
+<header>
+  <img class="logo-img" src="logo.png" alt="گویا">
+  <div class="spacer"></div>
+  <a class="chip" href="https://github.com/alizamani1616/goya" target="_blank" rel="noopener">⭐ گیت‌هاب</a>
+  <button class="chip" id="themeBtn">🌙 تم تیره</button>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>زبان برنامه‌نویسی <span class="g">گـ</span><span class="o">ویـ</span>ا</h1>
+    <p class="sub">زبانی که حرف می‌زنه — ویژوال بیسیکِ دوران جدید، به فارسی</p>
+    <p class="desc">
+      گویا یه زبان برنامه‌نویسی <b>واقعیِ فارسیه</b>: کلیدواژه‌ها فارسی، اعداد فارسی چاپ می‌شن،
+      پیام خطاها فارسیه، و تقویم شمسی از روز اول داخل خود زبانه.
+      بدون آکولاد و سمی‌کالن — بلوک‌ها با تورفتگی، تا تایپ فارسی راحت بمونه.
+      مفسرش با پایتون خالص نوشته شده؛ یعنی کل اکوسیستم پایتون پشتشه.
+    </p>
+    <div class="btns">
+      <a class="btn btn-purple" href="#نصب">🖥 اجرای محیط روی کامپیوترت</a>
+      <a class="btn btn-ghost" href="#نصب">⬇ روش نصب و اجرا</a>
+    </div>
+  </section>
+
+  <h2 class="sec">✨ گویا چیکار بلده؟</h2>
+  <p class="secsub">همه‌چیز از دید یه فارسی‌زبان</p>
+  <div class="grid">
+    <div class="feat"><span class="ic">🇮🇷</span><b>کلیدواژه‌های فارسی</b><p>اگر، وگرنه، تا وقتی که، برای هر، تابع، برگردان، بگو، بپرس — بدون یادگیری انگلیسی.</p></div>
+    <div class="feat"><span class="ic">🔢</span><b>اعداد فارسی</b><p>۱۲۳ و 123 هر دو قبول؛ خروجی همیشه با رقم فارسی چاپ می‌شه.</p></div>
+    <div class="feat"><span class="ic">💬</span><b>خطاهای فارسی</b><p>«متغیر «قیمت» تعریف نشده — اول با = بهش مقدار بده» با شماره سطر و نمایش خود سطر.</p></div>
+    <div class="feat"><span class="ic">📅</span><b>تاریخ شمسی توکار</b><p>امروز() همون‌جا ۱۴۰۵/۰۷/۱۷ برمی‌گردونه — بدون نصب هیچ کتابخانه‌ای.</p></div>
+    <div class="feat"><span class="ic">🧩</span><b>تحمل تایپ فارسی</b><p>ي/ی و ك/ک یکی حساب می‌شن، نیم‌فاصله مشکلی نداره، رشته با «» هم می‌شه نوشت.</p></div>
+    <div class="feat"><span class="ic">🐍</span><b>کتابخانه‌های پایتون</b><p>مفسر گویا پایتونیه — مسیر استفاده از requests و openpyxl و بقیه بازه.</p></div>
+  </div>
+
+  <h2 class="sec">👀 یه نمونه‌ی واقعی</h2>
+  <p class="secsub">فاکتور خرید — از فایل‌های نمونه‌ی خود پروژه</p>
+  <div class="code-card">
+    <div class="bar">📌 فاکتور.goya</div>
+    <pre id="demo">## کار با لیست — فاکتور خرید
+خرید = ["نان"، "شیر"، "چای"]
+قیمت‌ها = [۱۲۰۰۰، ۴۵۰۰۰، ۸۵۰۰۰]
+
+جمع = ۰
+برای هر قیمت در قیمت‌ها
+    جمع = جمع + قیمت
+
+اگر جمع بزرگتر از ۱۰۰۰۰۰
+    بگو("جمع فاکتور: " + متن(جمع) + " تومان — گرون شد!")
+وگرنه
+    بگو("جمع فاکتور: " + متن(جمع) + " تومان")</pre>
+    <div class="out-demo"><small>خروجی:</small>جمع فاکتور: ۱۴۵۵۰۰ تومان — گرون شد!</div>
+  </div>
+
+  <h2 class="sec">📖 کلیدواژه‌ها</h2>
+  <p class="secsub">کل زبان تو یه نگاه — بیشتر از این نیست، قول می‌دیم</p>
+  <table class="kw">
+    <tr><th>گویا</th><th>مثل</th><th>گویا</th><th>مثل</th></tr>
+    <tr><td><code>بگو</code></td><td>print</td><td><code>اگر / وگرنه</code></td><td>if / else</td></tr>
+    <tr><td><code>بپرس</code></td><td>input</td><td><code>تا وقتی که</code></td><td>while</td></tr>
+    <tr><td><code>تابع</code> / <code>برگردان</code></td><td>def / return</td><td><code>برای هر … از … تا</code></td><td>for</td></tr>
+    <tr><td><code>درست / غلط / پوچ</code></td><td>True / False / None</td><td><code>و / یا / نه</code></td><td>and / or / not</td></tr>
+    <tr><td><code>بشکن / ادامه</code></td><td>break / continue</td><td><code>طول، عدد، متن، گرد، تصادفی، امروز</code></td><td>توابع داخلی</td></tr>
+  </table>
+
+  <h2 class="sec" id="نصب">⬇ نصب و اجرا</h2>
+  <p class="secsub">سه خط، همین</p>
+  <div class="install">
+    <pre><span class="cmt"># ۱) پروژه رو بگیر</span>
+<span class="cmd">git clone https://github.com/alizamani1616/goya</span>
+<span class="cmd">cd goya</span>
+
+<span class="cmt"># ۲) یه برنامه اجرا کن</span>
+<span class="cmd">python -m goya run examples/salam.goya</span>
+
+<span class="cmt"># ۳) یا محیط گرافیکی رو باز کن (همین «تست سریع»!)</span>
+<span class="cmd">python -m goya ide</span></pre>
+    <div class="steps">
+      🖥 دستور <b>goya ide</b> محیط کامل رو باز می‌کنه: ویرایشگر راست‌چین با رنگ‌آمیزی،
+      قالب‌های آماده (تایپ کن «اگر» تا ببینی!)، دکمه اجرا و پنل ورودی — همه محلی، بدون اینترنت.<br>
+      📦 نسخه‌ی <b>pip</b> و فایل اجرایی <b>goya.exe</b> توی نقشه‌راهه.
+    </div>
+  </div>
+
+  <h2 class="sec">🗺 نقشه راه</h2>
+  <p class="secsub">مسیر تا «وی‌بی ۶ فارسی» کامل</p>
+  <div class="road">
+    <div class="phase done"><span class="n">فاز ۱ ✅</span><b>مغز زبان</b><p>مفسر کامل، REPL، خطاهای فارسی، محیط گرافیکی، تاریخ شمسی</p></div>
+    <div class="phase"><span class="n">فاز ۲</span><b>فرم‌ها</b><p>فرم و دکمه به سبک وی‌بی: پیام، کادر، دکمه — و پل به کتابخانه‌های پایتون</p></div>
+    <div class="phase"><span class="n">فاز ۳</span><b>طراح بصری</b><p>درگ‌ودراپ فرم مثل وی‌بی ۶ + خروجی goya.exe تک‌فایله</p></div>
+    <div class="phase"><span class="n">فاز ۴</span><b>ابزارها</b><p>کتابخانه اکسل/CSV/HTTP برای اتوماسیون، سایت مستندات، پلی‌گراند آنلاین</p></div>
+  </div>
+</main>
+
+<footer>
+  ساخته‌شده با ❤️ توسط <a href="https://github.com/alizamani1616" target="_blank" rel="noopener">علی زمانی</a>
+  • لایسنس آزاد MIT • <a href="https://github.com/alizamani1616/goya" target="_blank" rel="noopener">github.com/alizamani1616/goya</a>
+</footer>
+
+<script>
+/* همون رنگ‌آمیزی ادیتور، برای نمونه‌ی صفحه */
+const KW=new Set(["اگر","وگرنه","تا","وقتی","که","برای","هر","از","در","تابع","برگردان","بشکن","ادامه"]);
+const VAL=new Set(["درست","غلط","پوچ"]);
+const OP1=new Set(["برابر","نابرابر","ضربدر","باقیمانده"]);
+const BIO=new Set(["بزرگتر","کوچکتر"]);
+const BUILT=new Set(["بگو","بنویس","بپرس","بگیر","طول","عدد","متن","گرد","تصادفی","امروز"]);
+const strip=s=>s.replace(/\u200c/g,"");
+const TOKEN_RE=/("(?:[^"\\\n]|\\.)*"?|«[^»]*»?|#[^\n]*|[0-9\u06F0-\u06F9\u0660-\u0669]+(?:[.٫][0-9\u06F0-\u06F9\u0660-\u0669]+)?|[\u0600-\u06FF\u200c_]+|\n|[^\S\n]+|[\s\S])/g;
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function highlight(code){
+  const toks=[];let m;TOKEN_RE.lastIndex=0;
+  while((m=TOKEN_RE.exec(code))!==null){
+    const t=m[0];let cls="plain";
+    if(t[0]==="#")cls="cmt";
+    else if(t[0]==='"'||t[0]==="«")cls="str";
+    else if(/^[0-9\u06F0-\u06F9\u0660-\u0669]/.test(t))cls="num";
+    else if(/^[\u0600-\u06FF\u200c_]+$/.test(t))cls="fa";
+    toks.push({t,cls});
+  }
+  const fa=i=>toks[i]&&toks[i].cls==="fa";
+  const w=i=>toks[i]?strip(toks[i].t):"";
+  for(let i=0;i<toks.length;i++){
+    if(!fa(i))continue;
+    const x=w(i);
+    if(x==="تا"&&w(i+1)==="وقتی"&&w(i+2)==="که"){toks[i].cls=toks[i+1].cls=toks[i+2].cls="kw";i+=2;continue;}
+    if(x==="برای"&&w(i+1)==="هر"){toks[i].cls=toks[i+1].cls="kw";i++;continue;}
+    if(BIO.has(x)&&(w(i+1)==="از"||w(i+1)==="مساوی")){toks[i].cls=toks[i+1].cls="opw";i++;continue;}
+    if((x==="از"||x==="مساوی")&&BIO.has(w(i-1))){toks[i].cls="opw";continue;}
+    if(x==="تقسیم"&&w(i+1)==="بر"){toks[i].cls=toks[i+1].cls="opw";i++;continue;}
+    if(x==="بر"&&w(i-1)==="تقسیم"){toks[i].cls="opw";continue;}
+    if(KW.has(x)||VAL.has(x))toks[i].cls="kw";
+    else if(OP1.has(x))toks[i].cls="opw";
+    else if(BUILT.has(x))toks[i].cls="built";
+  }
+  return toks.map(t=>t.cls==="plain"?esc(t.t):'<span class="tk-'+t.cls+'">'+esc(t.t)+'</span>').join("");
+}
+document.getElementById("demo").innerHTML=highlight(document.getElementById("demo").textContent);
+document.getElementById("themeBtn").onclick=()=>{
+  const dark=document.body.getAttribute("data-theme")==="dark";
+  document.body.setAttribute("data-theme",dark?"":"dark");
+  document.getElementById("themeBtn").textContent=dark?"🌙 تم تیره":"☀️ تم روشن";
+  try{localStorage.setItem("goya-ide-theme",dark?"":"dark");}catch(e){}
+};
+try{
+  if(localStorage.getItem("goya-ide-theme")==="dark"){
+    document.body.setAttribute("data-theme","dark");
+    document.getElementById("themeBtn").textContent="☀️ تم روشن";
+  }
+}catch(e){}
+</script>
+</body>
+</html>

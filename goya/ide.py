@@ -124,12 +124,18 @@ class Handler(BaseHTTPRequestHandler):
                    "application/json; charset=utf-8")
 
     def do_GET(self):
-        if self.path in ("/", "/index.html"):
+        if self.path in ("/", "/index.html", "/landing.html"):
+            page = "landing.html"  # صفحه‌ی اصلی = معرفی گویا
+        elif self.path == "/ide":
+            page = "index.html"    # محیط تست سریع زبان
+        else:
+            page = None
+        if page:
             try:
-                with open(os.path.join(_STATIC, "index.html"), "rb") as f:
+                with open(os.path.join(_STATIC, page), "rb") as f:
                     self._send(200, f.read(), "text/html; charset=utf-8")
             except OSError:
-                self._json({"error": "index.html پیدا نشد"}, 500)
+                self._json({"error": "صفحه پیدا نشد"}, 500)
         elif self.path in ("/logo.png", "/logo-mark.png", "/favicon.png"):
             names = {
                 "/logo.png": "logo-full.png",
