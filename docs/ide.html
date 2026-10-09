@@ -414,11 +414,11 @@ async function getPyodide(){
     pyodideReady=(async()=>{
       statusEl.textContent="در حال آماده‌سازی پایتون… (اولین بار کمی طول می‌کشه)";
       const py=await loadPyodide();
-      py.FS.mkdir("/goya");
+      py.FS.mkdir("/goya");py.FS.mkdir("/goya/goya");
       const files=["__init__.py","normalize.py","errors.py","lexer.py","parser.py","interpreter.py","stdlib.py"];
       for(const f of files){
         const r=await fetch("goya_pkg/"+f);
-        py.FS.writeFile("/goya/"+f, await r.text());
+        py.FS.writeFile("/goya/goya/"+f, await r.text());
       }
       await py.runPythonAsync("import sys; sys.path.insert(0,'/goya')");
       const RUNNER = [
