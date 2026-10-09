@@ -125,4 +125,4 @@ drag-and-drop designer, and a batteries-included standard library.
 
 ## <img src="assets/icons/file.webp" width="26" align="top"> لایسنس
 
-MIT — آزاد و رایگان، مثل فرهنگ فارسی.
+MIT — آزاد و رایگان.
