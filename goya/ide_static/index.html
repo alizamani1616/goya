@@ -448,6 +448,7 @@ async function getPyodide(){
       await py.runPythonAsync(RUNNER);
       return py;
     })();
+    pyodideReady.catch(()=>{ pyodideReady=null; });
   }
   return pyodideReady;
 }
@@ -483,7 +484,9 @@ async function run(){
       metaEl.innerHTML="<img class='cicon' src='/icons/clock.webp'> <span>"+faNum(String(data.elapsed))+" میلی‌ثانیه</span>";
     }
   }catch(ex){
-    statusEl.textContent="ارتباط با سرور قطع شد";
+    statusEl.textContent = window.GOYA_ONLINE
+      ? "بارگذاری پایتون ناقص موند — یک‌بار دیگه دکمه رو بزن"
+      : "ارتباط با سرور قطع شد";
     outEl.textContent="";
   }
   runBtn.disabled=false;
