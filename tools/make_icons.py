@@ -58,7 +58,7 @@ def text_center(d, xy_c, txt, f, fill):
 
 # ─── آیکون‌های بج‌دار ───
 
-def i_flag():  # پرچم ایران — با نشان ملی
+def i_flag():  # پرچم ایران — نشان ملی و خطوط الله‌اکبر، استخراج‌شده از پرچم واقعی
     IR_GREEN = (35, 159, 64, 255)   # 239F40
     IR_RED = (218, 0, 0, 255)       # DA0000
     img, d = badge(WHITE)
@@ -67,10 +67,18 @@ def i_flag():  # پرچم ایران — با نشان ملی
     d.rectangle([3, 34, S - 3, 62], fill=WHITE)
     d.rounded_rectangle([3, 62, S - 3, S - 3], radius=24, fill=IR_RED)
     d.rectangle([3, 62, S - 3, 76], fill=IR_RED)
-    # نشان ملی (ساده‌شده): شمشیر وسط + دو قوس روبه‌رو
-    d.rounded_rectangle([45.5, 36.5, 50.5, 59.5], radius=2.5, fill=IR_RED)  # شمشیر
-    d.arc([50, 40, 64, 58], start=-75, end=75, fill=IR_RED, width=4)        # قوس راست
-    d.arc([32, 40, 46, 58], start=105, end=255, fill=IR_RED, width=4)       # قوس چپ
+    src = os.path.join(HERE, "assets_src")
+    # نوارهای «الله اکبر» روی مرز نوارها
+    top = Image.open(os.path.join(src, "takbir_top.png")).convert("RGBA").resize((90, 6), Image.LANCZOS)
+    bot = Image.open(os.path.join(src, "takbir_bot.png")).convert("RGBA").resize((90, 6), Image.LANCZOS)
+    img.alpha_composite(top, (3, 28))
+    img.alpha_composite(bot, (3, 62))
+    # نشان ملی در مرکز نوار سفید
+    em = Image.open(os.path.join(src, "emblem.png")).convert("RGBA")
+    h = 24
+    w = round(em.size[0] * h / em.size[1])
+    em = em.resize((w, h), Image.LANCZOS)
+    img.alpha_composite(em, ((S - w) // 2, 48 - h // 2))
     return img
 
 
