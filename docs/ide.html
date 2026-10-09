@@ -182,8 +182,8 @@ textarea.inputs{width:100%;height:104px;border:0;border-top:1px solid var(--line
   <img class="logo-img" src="logo.png" alt="گویا">
   <div class="tagline">تست سریع زبان — پایتون واقعی، اجرا داخل مرورگر تو</div>
   <div class="spacer"></div>
-  <a class="chip" href="index.html"><img class="cicon" src="icons/"home.webp" alt="">معرفی گویا</a>
-  <button class="chip" id="themeBtn"><img class="cicon" id="themeIc" src="icons/"moon.webp" alt=""><span id="themeLbl">تم تیره</span></button>
+  <a class="chip" href="index.html"><img class="cicon" src="icons/home.webp" alt="">معرفی گویا</a>
+  <button class="chip" id="themeBtn"><img class="cicon" id="themeIc" src="icons/moon.webp" alt=""><span id="themeLbl">تم تیره</span></button>
 </header>
 
 <main>
@@ -191,7 +191,7 @@ textarea.inputs{width:100%;height:104px;border:0;border-top:1px solid var(--line
   <div style="display:flex;flex-direction:column;gap:16px">
     <div class="card">
       <div class="toolbar">
-        <button class="btn-run" id="runBtn"><img class="cicon" src="icons/"play.webp" alt=""> اجرای برنامه <span class="kbd">Ctrl+Enter</span></button>
+        <button class="btn-run" id="runBtn"><img class="cicon" src="icons/play.webp" alt=""> اجرای برنامه <span class="kbd">Ctrl+Enter</span></button>
         <select id="examples"><option value="">نمونه‌ها…</option></select>
         <div class="spacer"></div>
         <div class="font-ctl">
@@ -214,7 +214,7 @@ textarea.inputs{width:100%;height:104px;border:0;border-top:1px solid var(--line
     </div>
 
     <div class="card out-card tint-mint">
-      <h2><img class="hicon" src="icons/"monitor.webp" alt="">خروجی</h2>
+      <h2><img class="hicon" src="icons/monitor.webp" alt="">خروجی</h2>
       <pre id="out">برنامه‌ات رو اجرا کن تا نتیجه رو اینجا ببینی.</pre>
       <div id="err"></div>
       <div class="meta" id="meta"></div>
@@ -224,12 +224,12 @@ textarea.inputs{width:100%;height:104px;border:0;border-top:1px solid var(--line
   <!-- ستون کنار -->
   <div class="side">
     <div class="card tint-blue">
-      <h2><img class="hicon" src="icons/"keyboard.webp" alt="">ورودی‌ها <small style="font-weight:500;color:var(--muted)">(هر سطر = یک «بپرس»)</small></h2>
+      <h2><img class="hicon" src="icons/keyboard.webp" alt="">ورودی‌ها <small style="font-weight:500;color:var(--muted)">(هر سطر = یک «بپرس»)</small></h2>
       <textarea class="inputs" id="inputs" placeholder="مثلاً:&#10;علی&#10;۱۷"></textarea>
     </div>
 
     <div class="card tint-violet">
-      <h2><img class="hicon" src="icons/"palette.webp" alt="">رنگ‌ها یعنی چی؟</h2>
+      <h2><img class="hicon" src="icons/palette.webp" alt="">رنگ‌ها یعنی چی؟</h2>
       <div class="hint">
         <span class="dot d-kw"></span><b>ساختار زبان</b> — اگر، وگرنه، برای هر، تابع…<br>
         <span class="dot d-built"></span><b>تابع‌های آماده</b> — بگو، بپرس، طول، امروز…<br>
@@ -241,7 +241,7 @@ textarea.inputs{width:100%;height:104px;border:0;border-top:1px solid var(--line
     </div>
 
     <div class="card tint-yellow">
-      <h2><img class="hicon" src="icons/"bulb.webp" alt="">راهنمای سریع</h2>
+      <h2><img class="hicon" src="icons/bulb.webp" alt="">راهنمای سریع</h2>
       <div class="hint">
         یه کلمه از زبان رو تایپ کن (مثل <b>اگر</b> یا <b>برای</b>) — همون لحظه
         <b>قالب آماده</b> زیر ویرایشگر میاد؛ با <b>Tab</b> یا کلیک، کل ساختار با تورفتگی میاد سر جاش.<br>
@@ -534,7 +534,7 @@ const themeBtn=document.getElementById("themeBtn");
 themeBtn.onclick=()=>{
   const dark=document.body.getAttribute("data-theme")==="dark";
   document.body.setAttribute("data-theme",dark?"":"dark");
-  document.getElementById("themeIc").src=dark?"/icons/moon.webp":"/icons/sun.webp";
+  document.getElementById("themeIc").src=dark?"icons/moon.webp":"icons/sun.webp";
   document.getElementById("themeLbl").textContent=dark?"تم تیره":"تم روشن";
   try{localStorage.setItem("goya-ide-theme",dark?"":"dark");}catch(e){}
 };
@@ -545,7 +545,7 @@ themeBtn.onclick=()=>{
     const saved=localStorage.getItem("goya-ide-code");
     if(saved)ta.value=saved;
     const th=localStorage.getItem("goya-ide-theme");
-    if(th==="dark"){document.body.setAttribute("data-theme","dark");document.getElementById("themeIc").src="icons/"sun.webp";document.getElementById("themeLbl").textContent="تم روشن";}
+    if(th==="dark"){document.body.setAttribute("data-theme","dark");document.getElementById("themeIc").src="icons/sun.webp";document.getElementById("themeLbl").textContent="تم روشن";}
   }catch(e){}
   if(!ta.value){
     ta.value='## به محیط گویا خوش اومدی!\n## یه کلمه تایپ کن: «اگر» یا «برای» — قالب آماده میاد\n\nبگو("سلام دنیا!")\nبگو("امروز: " + امروز())\n';

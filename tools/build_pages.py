@@ -37,10 +37,15 @@ TITLES = {
 
 
 def rel_to_abs_paths(html):
-    """مسیرهای مطلق محلی → نسبی برای Pages (سایت زیر /goya/ سرو می‌شه)"""
+    """مسیرهای مطلق محلی → نسبی برای Pages (سایت زیر /goya/ سرو می‌شه)
+
+    الگو با گیومه است تا هم attributeهای HTML و هم رشته‌های داخل JS درست
+    جایگزین بشن و هیچ‌وقت وسط رشته بریده نشه.
+    """
     html = html.replace('href="/favicon.png"', 'href="favicon.png"')
-    html = html.replace('src="/logo.png"', 'src="logo.png"')
-    html = html.replace('src="/icons/', 'src="icons/"')
+    html = html.replace('"/icons/', '"icons/')
+    html = html.replace('"/logo.png"', '"logo.png"')
+    html = html.replace('"/favicon.png"', '"favicon.png"')
     return html
 
 
