@@ -106,7 +106,9 @@ def build_pkg():
 def copy_static():
     shutil.copy(os.path.join(STATIC, "logo-full.png"), os.path.join(DOCS, "logo.png"))
     shutil.copy(os.path.join(STATIC, "favicon.png"), os.path.join(DOCS, "favicon.png"))
-    print("static assets ✓")
+    # بدون این، Jekyll فایل‌هایی مثل __init__.py رو publish نمی‌کنه
+    open(os.path.join(DOCS, ".nojekyll"), "w").close()
+    print("static assets ✓ (+.nojekyll)")
 
 
 if __name__ == "__main__":
