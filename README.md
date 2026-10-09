@@ -2,10 +2,10 @@
   <img src="assets/goya-logo.png" alt="گویا — Goya" width="520">
 </div>
 
-# گویا (Goya) 🇮🇷
+# گویا (Goya) <img src="assets/icons/flag.webp" width="30" align="top">
 
 > **گویا — زبانی که حرف می‌زنه.**
-> ویژوال بیسیکِ دوران جدید، به فارسی.
+> برنامه‌نویسی مدرن، به فارسی.
 
 گویا یه زبان برنامه‌نویسی **واقعی و فارسی** است: کلیدواژه‌ها فارسی، اعداد فارسی،
 خطاها فارسی، و تاریخ شمسی از روز اول داخل خود زبان. بدون آکولاد، بدون سمی‌کالن —
@@ -14,7 +14,7 @@
 مفسر گویا با پایتون نوشته شده — یعنی کل اکوسیستم پایتون پشتشه — و با
 [PyInstaller] به یه فایل `goya.exe` تک‌فایله تبدیل می‌شه که کاربر بدون نصب هیچی اجراش می‌کنه.
 
-## ✨ ویژگی‌ها
+## <img src="assets/icons/sparkle.webp" width="26" align="top"> ویژگی‌ها
 
 - **کلیدواژه‌های فارسی**: `اگر`، `وگرنه`، `تا وقتی که`، `برای هر`، `تابع`، `برگردان`
 - **اعداد فارسی و لاتین**: `۱۲۳` و `123` هر دو قبول‌ان؛ خروجی همیشه با رقم فارسی
@@ -24,7 +24,7 @@
 - **تاریخ شمسی توکار**: `امروز()` → `۱۴۰۵/۰۷/۱۷`
 - **خطاهای فارسی آدم‌فهم** با شماره سطر و نمایش خود سطر
 
-## 🖥 محیط گویا (IDE)
+## <img src="assets/icons/monitor.webp" width="26" align="top"> محیط گویا (IDE)
 
 یه محیط برنامه‌نویسی فارسی و راست‌چین تو مرورگر خودت — با رنگ‌آمیزی زنده‌ی کد،
 قالب‌های آماده (تایپ کن «اگر»، کل ساختار میاد)، پنل ورودی، تم روشن/تیره و دکمه‌ی اجرا:
@@ -35,7 +35,7 @@ python -m goya ide
 
 مرورگر خودش باز می‌شه روی `http://127.0.0.1:...` — همه‌چیز محلیه، هیچی جایی نمی‌ره.
 
-## 🚀 شروع سریع
+## <img src="assets/icons/rocket.webp" width="26" align="top"> شروع سریع
 
 ```bash
 python -m goya run examples/salam.goya   # اجرای فایل
@@ -52,7 +52,7 @@ python -m goya repl                      # محیط تعاملی
 => ۴۹
 ```
 
-## 📝 یه نگاه به زبان
+## <img src="assets/icons/pin.webp" width="26" align="top"> یه نگاه به زبان
 
 ```text
 ## فاکتور خرید — کامنت با ##
@@ -70,7 +70,7 @@ python -m goya repl                      # محیط تعاملی
     بگو("سبک‌ه")
 ```
 
-## 📖 کلیدواژه‌ها
+## <img src="assets/icons/book.webp" width="26" align="top"> کلیدواژه‌ها
 
 | فارسی | کار | مثل |
 |--------|-----|-----|
@@ -86,14 +86,14 @@ python -m goya repl                      # محیط تعاملی
 
 توابع داخلی: `طول`، `عدد`، `متن`، `گرد`، `تصادفی(از، تا)`، `امروز()`
 
-## 🗺 نقشه راه
+## <img src="assets/icons/map.webp" width="26" align="top"> نقشه راه
 
-- **فاز ۱ ✅** — مغز زبان: مفسر کامل، REPL، خطاهای فارسی، تست + **محیط گرافیکی (IDE) راست‌چین**
-- **فاز ۲** — فرم‌های وی‌بی‌قوری: `فرم`، `دکمه`، `کادر`، `پیام` + پل به کتابخانه‌های پایتون
+- **فاز ۱ (انجام شده)** — مغز زبان: مفسر کامل، REPL، خطاهای فارسی، تست + **محیط گرافیکی (IDE) راست‌چین**
+- **فاز ۲** — فرم، دکمه، کادر و پیام آماده + پل به کتابخانه‌های پایتون
 - **فاز ۳** — طراح بصری فرم (درگ‌ودراپ) + خروجی `goya.exe` تک‌فایله
 - **فاز ۴** — کتابخانه‌های کاربردی (اکسل/CSV/HTTP)، سایت مستندات
 
-## ⚙️ نصب (برای توسعه)
+## <img src="assets/icons/download.webp" width="26" align="top"> نصب (برای توسعه)
 
 ```bash
 git clone https://github.com/alizamani1616/goya
@@ -109,10 +109,10 @@ digits, beginner-friendly Persian error messages, and a built-in Jalali
 (Shamsi) calendar — `امروز()` returns today's Persian date. Blocks are
 indentation-based (no braces, no semicolons) so Persian typing stays smooth.
 The interpreter is written in pure Python and can be frozen into a single
-portable `goya.exe` with PyInstaller. Roadmap: VB-style visual form builder,
+portable `goya.exe` with PyInstaller. Roadmap: built-in visual form builder,
 drag-and-drop designer, and a batteries-included standard library.
 
-## 🎨 هویت بصری
+## <img src="assets/icons/palette.webp" width="26" align="top"> هویت بصری
 
 | رنگ | کد | کاربرد |
 |------|-----|--------|
@@ -123,6 +123,6 @@ drag-and-drop designer, and a batteries-included standard library.
 | فیروزه‌ای روشن | `#2DD4BF` | لینک‌ها و تأکیدها در تم تیره |
 | خاکستری روشن | `#CBD5E1` | متن‌های فرعی در تم تیره |
 
-## 📄 لایسنس
+## <img src="assets/icons/file.webp" width="26" align="top"> لایسنس
 
 MIT — آزاد و رایگان، مثل فرهنگ فارسی.

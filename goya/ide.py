@@ -147,6 +147,13 @@ class Handler(BaseHTTPRequestHandler):
                     self._send(200, f.read(), "image/png")
             except OSError:
                 self._json({"error": "فایل پیدا نشد"}, 404)
+        elif self.path.startswith("/icons/") and self.path.endswith(".webp"):
+            name = os.path.basename(self.path)
+            try:
+                with open(os.path.join(_STATIC, "icons", name), "rb") as f:
+                    self._send(200, f.read(), "image/webp")
+            except OSError:
+                self._json({"error": "فایل پیدا نشد"}, 404)
         elif self.path == "/api/examples":
             self._json({"examples": list_examples()})
         else:
