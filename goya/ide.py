@@ -33,6 +33,14 @@ _EXAMPLE_TITLES = {
     "hads-adad": "بازی حدس عدد",
     "emrooz": "امروز و ترفندها",
     "demo": "تور همه‌ی قابلیت‌ها",
+    "jadval-zarb": "جدول ضرب (حلقه تو در تو)",
+    "adad-avval": "اعداد اول تا ۵۰",
+    "fibonachi": "فیبوناچی",
+    "mashin-hesab": "ماشین‌حساب ساده",
+    "ghorreh-keshi": "قرعه‌کشی 🎲",
+    "faslha": "فصل سال",
+    "bozorgtarin": "گران‌ترین و میانگین",
+    "makoos": "معکوس کردن متن",
 }
 
 
