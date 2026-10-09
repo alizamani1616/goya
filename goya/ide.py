@@ -130,10 +130,14 @@ class Handler(BaseHTTPRequestHandler):
                     self._send(200, f.read(), "text/html; charset=utf-8")
             except OSError:
                 self._json({"error": "index.html پیدا نشد"}, 500)
-        elif self.path in ("/logo-mark.png", "/favicon.png"):
-            name = "logo-mark.png" if "logo" in self.path else "favicon.png"
+        elif self.path in ("/logo.png", "/logo-mark.png", "/favicon.png"):
+            names = {
+                "/logo.png": "logo-full.png",
+                "/logo-mark.png": "logo-mark.png",
+                "/favicon.png": "favicon.png",
+            }
             try:
-                with open(os.path.join(_STATIC, name), "rb") as f:
+                with open(os.path.join(_STATIC, names[self.path]), "rb") as f:
                     self._send(200, f.read(), "image/png")
             except OSError:
                 self._json({"error": "فایل پیدا نشد"}, 404)

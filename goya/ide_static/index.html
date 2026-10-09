@@ -11,83 +11,170 @@
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css"></noscript>
 <style>
 :root{
-  --bg:#F8FAFC; --card:#ffffff; --text:#111827; --muted:#64748B;
-  --code-bg:#FDFEFF; --caret:#0F766E; --sel:rgba(15,118,110,.16);
-  --kw:#0F766E; --built:#7C3AED; --str:#047857; --num:#2563EB;
-  --cmt:#94A3B8; --opw:#0D9488; --plain:#1F2937;
-  --term-bg:#111827; --term-text:#F8FAFC; --err-bg:#3F1D21; --err-text:#FECACA;
-  --brand:#0F766E; --brand-light:#2DD4BF; --purple:#7C3AED;
-  --line:rgba(17,24,39,.10);
+  --bg:#FFF3E4; --card:#ffffff; --text:#1E2A4A; --muted:#8A93A6;
+  --code-bg:#FDFCFF; --caret:#7048E8; --sel:rgba(112,72,232,.14);
+  --kw:#E5484D; --built:#7048E8; --str:#0CA678; --num:#3B82F6;
+  --cmt:#9AA3B8; --opw:#F76707; --plain:#1E2A4A;
+  --out-bg:#FBFDFF; --out-text:#1E2A4A; --err-bg:#FDECEC; --err-text:#C92A2A;
+  --purple:#7048E8; --purple2:#9775FA; --coral:#E5484D;
+  --tint-blue:#E3F2FF; --tint-violet:#F1EDFF; --tint-yellow:#FFF6DC; --tint-mint:#E4FAF0;
+  --gutter-bg:#F3F0FF; --gutter-num:#A79EF0;
+  --line:rgba(30,42,74,.10);
   --code-size:17px;
 }
 [data-theme="dark"]{
   --bg:#111827; --card:#18213A; --text:#F8FAFC; --muted:#CBD5E1;
-  --code-bg:#0E1626; --caret:#2DD4BF; --sel:rgba(45,212,191,.20);
-  --kw:#2DD4BF; --built:#A78BFA; --str:#34D399; --num:#60A5FA;
-  --cmt:#64748B; --opw:#5EEAD4; --plain:#E2E8F0;
+  --code-bg:#0F1830; --caret:#9775FA; --sel:rgba(151,117,250,.22);
+  --kw:#FF8787; --built:#9775FA; --str:#38D9A9; --num:#74C0FC;
+  --cmt:#64748B; --opw:#FFA94D; --plain:#E2E8F0;
+  --out-bg:#0F1830; --out-text:#F8FAFC; --err-bg:#3A1D24; --err-text:#FECACA;
+  --tint-blue:#17263F; --tint-violet:#221E44; --tint-yellow:#2B2517; --tint-mint:#113227;
+  --gutter-bg:#1B2542; --gutter-num:#7A86C8;
   --line:rgba(248,250,252,.09);
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Vazirmatn,'Segoe UI',Tahoma,sans-serif;transition:background .25s}
-header{background:#111827;color:#F8FAFC;padding:12px 26px;display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--brand)}
-.logo-mark{height:46px;display:block}
-.logo{font-size:28px;font-weight:800;letter-spacing:-.5px;color:#F8FAFC}
-.tagline{color:#CBD5E1;font-size:14px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Vazirmatn,'Segoe UI',Tahoma,sans-serif;transition:background .25s;min-height:100vh}
+
+/* ───── تزئینات پس‌زمینه (خورشید، ابر، برگ...) ───── */
+.deco{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.deco svg,.deco .d-dots{position:absolute}
+[data-theme="dark"] .deco{opacity:.14}
+.d-sun{left:-34px;top:26px}
+.d-cloud1{left:230px;top:16px}
+.d-cloud2{right:300px;top:88px;transform:scale(.62)}
+.d-squiggle{right:52px;top:44%}
+.d-leaf1{left:-26px;bottom:56px}
+.d-leaf2{right:-30px;bottom:110px;transform:scaleX(-1)}
+.d-corner{right:0;bottom:0;width:170px;height:170px;background:#FFE3CE;border-top-left-radius:100%}
+[data-theme="dark"] .d-corner{background:#1B2542}
+.d-dots{width:92px;height:64px;background-image:radial-gradient(circle,#FFD43B 4.5px,transparent 5px);background-size:23px 21px;opacity:.9}
+.d-dots1{left:320px;top:24px}
+.d-dots2{left:44px;bottom:200px;background-image:radial-gradient(circle,#C3B8FF 4.5px,transparent 5px)}
+.d-spark{right:230px;top:170px}
+
+header{position:relative;z-index:1;display:flex;align-items:center;gap:16px;padding:16px 28px 8px}
+.logo-img{height:64px;display:block;filter:drop-shadow(0 3px 8px rgba(112,72,232,.18))}
+.tagline{color:#7A6A55;font-size:14.5px;font-weight:600}
+[data-theme="dark"] .tagline{color:#CBD5E1}
 .spacer{flex:1}
-.chip{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:999px;padding:7px 16px;font-family:inherit;font-size:14px;cursor:pointer;transition:.15s}
-.chip:hover{background:rgba(255,255,255,.32)}
-main{max-width:1440px;margin:0 auto;padding:18px;display:grid;grid-template-columns:1.55fr .95fr;gap:16px}
-.card{background:var(--card);border-radius:18px;box-shadow:0 5px 22px rgba(70,45,10,.09);overflow:hidden}
-.card h2{margin:0;padding:13px 18px;font-size:15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.chip{background:#fff;border:1.5px solid var(--line);color:var(--text);border-radius:999px;padding:8px 18px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(112,72,232,.10);transition:.15s}
+.chip:hover{border-color:var(--purple2)}
+
+main{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:8px 18px 20px;display:grid;grid-template-columns:1.55fr .95fr;gap:16px}
+.card{background:var(--card);border-radius:18px;box-shadow:0 6px 24px rgba(112,72,232,.08);overflow:hidden;border:1px solid var(--line)}
+.card h2{margin:0;padding:13px 18px;font-size:15px;display:flex;align-items:center;gap:8px}
+.tint-blue{background:var(--tint-blue)}
+.tint-violet{background:var(--tint-violet)}
+.tint-yellow{background:var(--tint-yellow)}
+.tint-mint{background:var(--tint-mint)}
+
 /* ───── نوار ابزار ───── */
-.toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
-.btn-run{background:var(--brand);color:#fff;border:0;border-radius:12px;padding:10px 22px;font:700 15px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;box-shadow:0 3px 10px rgba(15,118,110,.35);transition:.15s}
-.btn-run:hover{background:#0D9488;transform:translateY(-1px);box-shadow:0 5px 14px rgba(15,118,110,.45)}
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;flex-wrap:wrap;border-bottom:1px solid var(--line);background:var(--card)}
+.btn-run{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;border:0;border-radius:14px;padding:10px 24px;font:700 15px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;box-shadow:0 4px 14px rgba(112,72,232,.35);transition:.15s}
+.btn-run:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(112,72,232,.45)}
 .btn-run:disabled{opacity:.55;cursor:wait}
-.kbd{font-size:11px;opacity:.8;font-weight:400}
-select{font:14px Vazirmatn,'Segoe UI',Tahoma;padding:8px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--code-bg);color:var(--text);cursor:pointer}
-.font-ctl{display:flex;gap:4px}
-.font-ctl button{border:1.5px solid var(--line);background:var(--code-bg);color:var(--text);border-radius:8px;width:32px;height:32px;font-size:14px;cursor:pointer}
+.kbd{font-size:11px;opacity:.85;font-weight:400}
+select{font:600 14px Vazirmatn,'Segoe UI',Tahoma;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--code-bg);color:var(--text);cursor:pointer}
+.font-ctl{display:flex;gap:5px}
+.font-ctl button{border:1.5px solid var(--line);background:var(--code-bg);color:var(--purple);border-radius:10px;width:34px;height:34px;font-size:14px;font-weight:700;cursor:pointer;transition:.13s}
+.font-ctl button:hover{border-color:var(--purple2)}
+
 /* ───── ویرایشگر ───── */
-.editor-wrap{display:flex;height:540px;background:var(--code-bg)}
-.gutter{width:46px;padding:14px 6px 14px 0;text-align:center;color:var(--muted);font:500 var(--code-size)/1.9 Vazirmatn,'Segoe UI',Tahoma;overflow:hidden;user-select:none;background:rgba(15,118,110,.06);flex-shrink:0}
+.editor-wrap{display:flex;height:520px;background:var(--code-bg)}
+.gutter{width:46px;padding:14px 6px 14px 0;text-align:center;color:var(--gutter-num);font:600 var(--code-size)/1.9 Vazirmatn,'Segoe UI',Tahoma;overflow:hidden;user-select:none;background:var(--gutter-bg);flex-shrink:0}
 .code-area{position:relative;flex:1;direction:rtl}
 .code-layer{margin:0;padding:14px 16px 14px 16px;font:500 var(--code-size)/1.9 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;word-wrap:break-word;direction:rtl;text-align:right;border:0;letter-spacing:0}
 #hl{position:absolute;inset:0;overflow:hidden;pointer-events:none;color:var(--plain)}
 #code{position:absolute;inset:0;width:100%;height:100%;background:transparent;color:transparent;caret-color:var(--caret);resize:none;outline:none;overflow:auto}
 #code::selection{background:var(--sel)}
 .tk-kw{color:var(--kw);font-weight:800}
-.tk-built{color:var(--built);font-weight:700}
-.tk-str{color:var(--str)}
+.tk-built{color:var(--built);font-weight:800}
+.tk-str{color:var(--str);font-weight:600}
 .tk-num{color:var(--num);font-weight:700}
 .tk-cmt{color:var(--cmt);font-style:italic}
 .tk-opw{color:var(--opw);font-weight:700}
+
 /* ───── قالب‌ها (پیشنهادگر) ───── */
-#chips{display:flex;gap:6px;flex-wrap:wrap;padding:9px 14px;border-top:1px solid var(--line);min-height:20px}
-.tpl-btn{background:rgba(124,58,237,.07);border:1.5px dashed rgba(124,58,237,.45);color:var(--purple);border-radius:999px;padding:5px 14px;font:600 13px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;transition:.13s}
+#chips{display:flex;gap:6px;flex-wrap:wrap;padding:9px 14px;border-top:1px solid var(--line);min-height:20px;background:var(--card)}
+.tpl-btn{background:rgba(112,72,232,.08);border:1.5px dashed rgba(112,72,232,.5);color:var(--purple);border-radius:999px;padding:5px 14px;font:700 13px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;transition:.13s}
 .tpl-btn:hover{background:var(--purple);color:#fff;border-style:solid}
-[data-theme="dark"] .tpl-btn{color:#A78BFA;border-color:rgba(167,139,250,.5)}
-[data-theme="dark"] .tpl-btn:hover{color:#111827;background:#A78BFA}
+.statusbar{display:flex;justify-content:space-between;padding:8px 16px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);background:var(--card)}
+
 /* ───── خروجی ───── */
 .out-card{grid-column:1}
-#out{margin:0;padding:16px 18px;background:var(--term-bg);color:var(--term-text);font:500 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;direction:rtl;text-align:right;min-height:130px;max-height:320px;overflow:auto}
-#err{display:none;margin:12px;padding:12px 16px;background:var(--err-bg);color:var(--err-text);border-radius:12px;font:500 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;direction:rtl;text-align:right}
+#out{margin:12px;padding:16px 18px;background:var(--out-bg);color:var(--out-text);border:1px solid var(--line);border-radius:14px;font:600 16px/2 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;direction:rtl;text-align:right;min-height:110px;max-height:300px;overflow:auto}
+#err{display:none;margin:0 12px 12px;padding:12px 16px;background:var(--err-bg);color:var(--err-text);border-radius:14px;font:600 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;direction:rtl;text-align:right}
 .meta{display:flex;gap:10px;align-items:center;padding:0 16px 12px;color:var(--muted);font-size:13px}
+
 /* ───── ستون کنار ───── */
 .side{display:flex;flex-direction:column;gap:16px}
-textarea.inputs{width:100%;height:110px;border:0;border-top:1px solid var(--line);background:var(--code-bg);color:var(--text);font:500 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;padding:12px 16px;resize:vertical;outline:none;direction:rtl}
-.hint{padding:6px 18px 16px;font-size:13.5px;line-height:2;color:var(--muted)}
-.hint b{color:var(--text)}
-.hint .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-left:6px;vertical-align:-1px}
+textarea.inputs{width:100%;height:104px;border:0;border-top:1px solid var(--line);background:var(--card);color:var(--text);font:600 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;padding:12px 16px;resize:vertical;outline:none;direction:rtl}
+.hint{padding:4px 18px 16px;font-size:13.5px;line-height:2.05;color:var(--text)}
+.hint b{font-weight:800}
+.hint .dot{display:inline-block;width:11px;height:11px;border-radius:4px;margin-left:6px;vertical-align:-1px}
 .d-kw{background:var(--kw)}.d-built{background:var(--built)}.d-str{background:var(--str)}.d-num{background:var(--num)}.d-opw{background:var(--opw)}.d-cmt{background:var(--cmt)}
-.statusbar{display:flex;justify-content:space-between;padding:8px 16px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line)}
 @media(max-width:1000px){main{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
+<!-- تزئینات شاد پس‌زمینه -->
+<div class="deco" aria-hidden="true">
+  <!-- خورشید خندان -->
+  <svg class="d-sun" width="170" height="170" viewBox="0 0 170 170">
+    <g fill="#FFD43B">
+      <circle cx="85" cy="85" r="52"/>
+      <rect x="80" y="4" width="10" height="22" rx="5"/>
+      <rect x="80" y="144" width="10" height="22" rx="5"/>
+      <rect x="4" y="80" width="22" height="10" rx="5"/>
+      <rect x="144" y="80" width="22" height="10" rx="5"/>
+      <rect x="26" y="26" width="10" height="22" rx="5" transform="rotate(-45 31 37)"/>
+      <rect x="134" y="26" width="10" height="22" rx="5" transform="rotate(45 139 37)"/>
+      <rect x="26" y="122" width="10" height="22" rx="5" transform="rotate(45 31 133)"/>
+      <rect x="134" y="122" width="10" height="22" rx="5" transform="rotate(-45 139 133)"/>
+    </g>
+    <circle cx="70" cy="80" r="5" fill="#7A5C00"/>
+    <circle cx="100" cy="80" r="5" fill="#7A5C00"/>
+    <path d="M70 100 Q85 114 100 100" stroke="#7A5C00" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <!-- ابرها -->
+  <svg class="d-cloud1" width="180" height="70" viewBox="0 0 180 70">
+    <g fill="#C9E7FF">
+      <circle cx="50" cy="45" r="26"/><circle cx="90" cy="32" r="32"/><circle cx="132" cy="46" r="24"/>
+      <rect x="40" y="42" width="100" height="26" rx="13"/>
+    </g>
+  </svg>
+  <svg class="d-cloud2" width="180" height="70" viewBox="0 0 180 70">
+    <g fill="#DCEBFF">
+      <circle cx="50" cy="45" r="26"/><circle cx="90" cy="32" r="32"/><circle cx="132" cy="46" r="24"/>
+      <rect x="40" y="42" width="100" height="26" rx="13"/>
+    </g>
+  </svg>
+  <!-- پیچک بنفش -->
+  <svg class="d-squiggle" width="46" height="170" viewBox="0 0 46 170">
+    <path d="M23 6 C43 30 3 52 23 76 C43 100 3 122 23 146" stroke="#C3B8FF" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="1 16"/>
+  </svg>
+  <!-- برگ‌ها -->
+  <svg class="d-leaf1" width="130" height="120" viewBox="0 0 130 120">
+    <ellipse cx="45" cy="70" rx="22" ry="46" fill="#63E6BE" transform="rotate(28 45 70)"/>
+    <ellipse cx="88" cy="52" rx="17" ry="38" fill="#96F2D7" transform="rotate(-18 88 52)"/>
+  </svg>
+  <svg class="d-leaf2" width="130" height="120" viewBox="0 0 130 120">
+    <ellipse cx="45" cy="70" rx="22" ry="46" fill="#63E6BE" transform="rotate(28 45 70)"/>
+    <ellipse cx="88" cy="52" rx="17" ry="38" fill="#96F2D7" transform="rotate(-18 88 52)"/>
+  </svg>
+  <!-- نقطه‌ها -->
+  <div class="d-dots d-dots1"></div>
+  <div class="d-dots d-dots2"></div>
+  <!-- جرقه -->
+  <svg class="d-spark" width="40" height="40" viewBox="0 0 40 40">
+    <path d="M20 2 L24 16 L38 20 L24 24 L20 38 L16 24 L2 20 L16 16 Z" fill="#FFD43B"/>
+  </svg>
+  <div class="d-corner"></div>
+</div>
+
 <header>
-  <img class="logo-mark" src="/logo-mark.png" alt="نشان گویا">
-  <div class="logo">گویا</div>
+  <img class="logo-img" src="/logo.png" alt="گویا">
   <div class="tagline">زبانی که حرف می‌زنه — بنویس، F5 بزن، بالا بیاد</div>
   <div class="spacer"></div>
   <button class="chip" id="themeBtn">🌙 تم تیره</button>
@@ -120,7 +207,7 @@ textarea.inputs{width:100%;height:110px;border:0;border-top:1px solid var(--line
       </div>
     </div>
 
-    <div class="card out-card">
+    <div class="card out-card tint-mint">
       <h2>🖥 خروجی</h2>
       <pre id="out">برنامه‌ات رو اجرا کن تا نتیجه رو اینجا ببینی.</pre>
       <div id="err"></div>
@@ -130,12 +217,12 @@ textarea.inputs{width:100%;height:110px;border:0;border-top:1px solid var(--line
 
   <!-- ستون کنار -->
   <div class="side">
-    <div class="card">
-      <h2>⌨ ورودی‌ها <small style="font-weight:400;color:var(--muted)">(هر سطر = یک «بپرس»)</small></h2>
+    <div class="card tint-blue">
+      <h2>⌨ ورودی‌ها <small style="font-weight:500;color:var(--muted)">(هر سطر = یک «بپرس»)</small></h2>
       <textarea class="inputs" id="inputs" placeholder="مثلاً:&#10;علی&#10;۱۷"></textarea>
     </div>
 
-    <div class="card">
+    <div class="card tint-violet">
       <h2>🎨 رنگ‌ها یعنی چی؟</h2>
       <div class="hint">
         <span class="dot d-kw"></span><b>ساختار زبان</b> — اگر، وگرنه، برای هر، تابع…<br>
@@ -147,7 +234,7 @@ textarea.inputs{width:100%;height:110px;border:0;border-top:1px solid var(--line
       </div>
     </div>
 
-    <div class="card">
+    <div class="card tint-yellow">
       <h2>💡 راهنمای سریع</h2>
       <div class="hint">
         یه کلمه از زبان رو تایپ کن (مثل <b>اگر</b> یا <b>برای</b>) — همون لحظه
