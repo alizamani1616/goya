@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "goya-lang"
+version = "0.1.0"
+description = "گویا — زبان برنامه‌نویسی فارسی | Goya: a Persian programming language"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Ali Zamani" }]
+keywords = ["persian", "farsi", "programming-language", "interpreter", "goya"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: Persian",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Interpreters",
+]
+
+[project.scripts]
+goya = "goya.cli:main"
+
+[tool.setuptools]
+packages = ["goya"]
