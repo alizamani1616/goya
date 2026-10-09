@@ -44,6 +44,7 @@ def rel_to_abs_paths(html):
     """
     html = html.replace('href="/favicon.png"', 'href="favicon.png"')
     html = html.replace('"/icons/', '"icons/')
+    html = html.replace("'/icons/", "'icons/")
     html = html.replace('"/logo.png"', '"logo.png"')
     html = html.replace('"/favicon.png"', '"favicon.png"')
     return html

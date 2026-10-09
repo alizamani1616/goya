@@ -477,11 +477,11 @@ async function run(){
     outEl.textContent=data.output||"";
     if(data.ok){
       statusEl.textContent="تمام شد ✓";
-      metaEl.innerHTML="<img class='cicon' src='/icons/clock.webp'> <span>"+faNum(String(data.elapsed))+" میلی‌ثانیه</span>";
+      metaEl.innerHTML="<img class='cicon' src=\"/icons/clock.webp\"> <span>"+faNum(String(data.elapsed))+" میلی‌ثانیه</span>";
     }else{
       statusEl.textContent="خطا داشت";
       errEl.textContent=data.error; errEl.style.display="block";
-      metaEl.innerHTML="<img class='cicon' src='/icons/clock.webp'> <span>"+faNum(String(data.elapsed))+" میلی‌ثانیه</span>";
+      metaEl.innerHTML="<img class='cicon' src=\"/icons/clock.webp\"> <span>"+faNum(String(data.elapsed))+" میلی‌ثانیه</span>";
     }
   }catch(ex){
     statusEl.textContent = window.GOYA_ONLINE
