@@ -58,13 +58,19 @@ def text_center(d, xy_c, txt, f, fill):
 
 # ─── آیکون‌های بج‌دار ───
 
-def i_flag():  # پرچم ایران
+def i_flag():  # پرچم ایران — با نشان ملی
+    IR_GREEN = (35, 159, 64, 255)   # 239F40
+    IR_RED = (218, 0, 0, 255)       # DA0000
     img, d = badge(WHITE)
-    d.rounded_rectangle([3, 3, S - 3, 34], radius=24, fill=GREEN)
-    d.rectangle([3, 20, S - 3, 34], fill=GREEN)
+    d.rounded_rectangle([3, 3, S - 3, 34], radius=24, fill=IR_GREEN)
+    d.rectangle([3, 20, S - 3, 34], fill=IR_GREEN)
     d.rectangle([3, 34, S - 3, 62], fill=WHITE)
-    d.rounded_rectangle([3, 62, S - 3, S - 3], radius=24, fill=RED)
-    d.rectangle([3, 62, S - 3, 76], fill=RED)
+    d.rounded_rectangle([3, 62, S - 3, S - 3], radius=24, fill=IR_RED)
+    d.rectangle([3, 62, S - 3, 76], fill=IR_RED)
+    # نشان ملی (ساده‌شده): شمشیر وسط + دو قوس روبه‌رو
+    d.rounded_rectangle([45.5, 36.5, 50.5, 59.5], radius=2.5, fill=IR_RED)  # شمشیر
+    d.arc([50, 40, 64, 58], start=-75, end=75, fill=IR_RED, width=4)        # قوس راست
+    d.arc([32, 40, 46, 58], start=105, end=255, fill=IR_RED, width=4)       # قوس چپ
     return img
 
 
