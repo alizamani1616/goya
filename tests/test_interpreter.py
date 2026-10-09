@@ -181,5 +181,36 @@ class TestErrors(unittest.TestCase):
         self.assertIn("مقایسه", err.message)
 
 
+class TestInputInjection(unittest.TestCase):
+    def test_injected_input(self):
+        import io as _io
+        import contextlib as _contextlib
+        from goya.interpreter import Interpreter
+        from goya.lexer import Lexer
+        from goya.parser import Parser
+        interp = Interpreter(input_fn=lambda prompt: "علی")
+        buf = _io.StringIO()
+        with _contextlib.redirect_stdout(buf):
+            prog = Parser(Lexer('بگو("سلام " + بپرس("نام؟"))').lex()).parse()
+            interp.run(prog)
+        self.assertEqual(buf.getvalue(), "سلام علی\n")
+
+
+class TestLoopGuard(unittest.TestCase):
+    def test_infinite_loop_stopped(self):
+        import io as _io
+        import contextlib as _contextlib
+        from goya.errors import GoyaRuntimeError
+        from goya.interpreter import Interpreter
+        from goya.lexer import Lexer
+        from goya.parser import Parser
+        interp = Interpreter(input_fn=lambda p: "", time_limit=0.4)
+        with self.assertRaises(GoyaRuntimeError) as ctx:
+            with _contextlib.redirect_stdout(_io.StringIO()):
+                prog = Parser(Lexer("تا وقتی که درست\n    بگو(۱)").lex()).parse()
+                interp.run(prog)
+        self.assertIn("طول کشید", ctx.exception.message)
+
+
 if __name__ == "__main__":
     unittest.main()

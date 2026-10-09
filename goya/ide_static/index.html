@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>گویا — محیط برنامه‌نویسی فارسی</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<style>
+:root{
+  --bg:#f6efe2; --card:#fffdf7; --text:#3b3128; --muted:#8a7d6d;
+  --code-bg:#fffcf5; --caret:#c2410c; --sel:rgba(217,119,6,.20);
+  --kw:#d97706; --built:#7c3aed; --str:#059669; --num:#2563eb;
+  --cmt:#a29b8c; --opw:#0f766e; --plain:#413a30;
+  --term-bg:#191f26; --term-text:#e7e5e0; --err-bg:#3d0c0c; --err-text:#fecaca;
+  --accent:#ea7317; --accent2:#c2410c;
+  --code-size:17px;
+}
+[data-theme="dark"]{
+  --bg:#12161b; --card:#1a2026; --text:#e6e1d8; --muted:#8b93a0;
+  --code-bg:#151a20; --caret:#fbbf24; --sel:rgba(251,191,36,.22);
+  --kw:#fbbf24; --built:#c084fc; --str:#34d399; --num:#60a5fa;
+  --cmt:#6b7280; --opw:#2dd4bf; --plain:#d7d3cb;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Vazirmatn,'Segoe UI',Tahoma,sans-serif;transition:background .25s}
+header{background:linear-gradient(135deg,#f8b84a,#ea7317 55%,#d94f10);color:#fff;padding:14px 26px;display:flex;align-items:center;gap:16px;box-shadow:0 3px 14px rgba(120,60,0,.25)}
+.logo{font-size:27px;font-weight:800;letter-spacing:-.5px;text-shadow:0 2px 6px rgba(0,0,0,.18)}
+.tagline{opacity:.92;font-size:14px}
+.spacer{flex:1}
+.chip{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:999px;padding:7px 16px;font-family:inherit;font-size:14px;cursor:pointer;transition:.15s}
+.chip:hover{background:rgba(255,255,255,.32)}
+main{max-width:1440px;margin:0 auto;padding:18px;display:grid;grid-template-columns:1.55fr .95fr;gap:16px}
+.card{background:var(--card);border-radius:18px;box-shadow:0 5px 22px rgba(70,45,10,.09);overflow:hidden}
+.card h2{margin:0;padding:13px 18px;font-size:15px;border-bottom:1px solid rgba(120,90,40,.12);display:flex;align-items:center;gap:8px}
+/* ───── نوار ابزار ───── */
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;flex-wrap:wrap;border-bottom:1px solid rgba(120,90,40,.12)}
+.btn-run{background:linear-gradient(135deg,#22c55e,#15803d);color:#fff;border:0;border-radius:12px;padding:10px 22px;font:700 15px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;box-shadow:0 3px 10px rgba(21,128,61,.35);transition:.15s}
+.btn-run:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(21,128,61,.45)}
+.btn-run:disabled{opacity:.55;cursor:wait}
+.kbd{font-size:11px;opacity:.8;font-weight:400}
+select{font:14px Vazirmatn,'Segoe UI',Tahoma;padding:8px 12px;border-radius:10px;border:1.5px solid rgba(120,90,40,.25);background:var(--code-bg);color:var(--text);cursor:pointer}
+.font-ctl{display:flex;gap:4px}
+.font-ctl button{border:1.5px solid rgba(120,90,40,.25);background:var(--code-bg);color:var(--text);border-radius:8px;width:32px;height:32px;font-size:14px;cursor:pointer}
+/* ───── ویرایشگر ───── */
+.editor-wrap{display:flex;height:540px;background:var(--code-bg)}
+.gutter{width:46px;padding:14px 6px 14px 0;text-align:center;color:var(--muted);font:500 var(--code-size)/1.9 Vazirmatn,'Segoe UI',Tahoma;overflow:hidden;user-select:none;background:rgba(120,90,40,.05);flex-shrink:0}
+.code-area{position:relative;flex:1;direction:rtl}
+.code-layer{margin:0;padding:14px 16px 14px 16px;font:500 var(--code-size)/1.9 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;word-wrap:break-word;direction:rtl;text-align:right;border:0;letter-spacing:0}
+#hl{position:absolute;inset:0;overflow:hidden;pointer-events:none;color:var(--plain)}
+#code{position:absolute;inset:0;width:100%;height:100%;background:transparent;color:transparent;caret-color:var(--caret);resize:none;outline:none;overflow:auto}
+#code::selection{background:var(--sel)}
+.tk-kw{color:var(--kw);font-weight:800}
+.tk-built{color:var(--built);font-weight:700}
+.tk-str{color:var(--str)}
+.tk-num{color:var(--num);font-weight:700}
+.tk-cmt{color:var(--cmt);font-style:italic}
+.tk-opw{color:var(--opw);font-weight:700}
+/* ───── قالب‌ها (پیشنهادگر) ───── */
+#chips{display:flex;gap:6px;flex-wrap:wrap;padding:9px 14px;border-top:1px solid rgba(120,90,40,.12);min-height:20px}
+.tpl-btn{background:linear-gradient(135deg,rgba(234,115,23,.12),rgba(194,65,12,.10));border:1.5px dashed rgba(234,115,23,.5);color:var(--accent2);border-radius:999px;padding:5px 14px;font:600 13px Vazirmatn,'Segoe UI',Tahoma;cursor:pointer;transition:.13s}
+.tpl-btn:hover{background:var(--accent);color:#fff;border-style:solid}
+[data-theme="dark"] .tpl-btn{color:#fbbf24;border-color:rgba(251,191,36,.45)}
+[data-theme="dark"] .tpl-btn:hover{color:#1a2026;background:#fbbf24}
+/* ───── خروجی ───── */
+.out-card{grid-column:1}
+#out{margin:0;padding:16px 18px;background:var(--term-bg);color:var(--term-text);font:500 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;direction:rtl;text-align:right;min-height:130px;max-height:320px;overflow:auto}
+#err{display:none;margin:12px;padding:12px 16px;background:var(--err-bg);color:var(--err-text);border-radius:12px;font:500 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;white-space:pre-wrap;direction:rtl;text-align:right}
+.meta{display:flex;gap:10px;align-items:center;padding:0 16px 12px;color:var(--muted);font-size:13px}
+/* ───── ستون کنار ───── */
+.side{display:flex;flex-direction:column;gap:16px}
+textarea.inputs{width:100%;height:110px;border:0;border-top:1px solid rgba(120,90,40,.12);background:var(--code-bg);color:var(--text);font:500 15px/1.9 Vazirmatn,'Segoe UI',Tahoma;padding:12px 16px;resize:vertical;outline:none;direction:rtl}
+.hint{padding:6px 18px 16px;font-size:13.5px;line-height:2;color:var(--muted)}
+.hint b{color:var(--text)}
+.hint .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-left:6px;vertical-align:-1px}
+.d-kw{background:var(--kw)}.d-built{background:var(--built)}.d-str{background:var(--str)}.d-num{background:var(--num)}.d-opw{background:var(--opw)}.d-cmt{background:var(--cmt)}
+.statusbar{display:flex;justify-content:space-between;padding:8px 16px;font-size:12.5px;color:var(--muted);border-top:1px solid rgba(120,90,40,.12)}
+@media(max-width:1000px){main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">گویا</div>
+  <div class="tagline">زبانی که حرف می‌زنه — بنویس، F5 بزن، بالا بیاد</div>
+  <div class="spacer"></div>
+  <button class="chip" id="themeBtn">🌙 تم تیره</button>
+</header>
+
+<main>
+  <!-- ستون ویرایشگر -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <div class="toolbar">
+        <button class="btn-run" id="runBtn">▶ اجرای برنامه <span class="kbd">Ctrl+Enter</span></button>
+        <select id="examples"><option value="">📄 نمونه‌ها…</option></select>
+        <div class="spacer"></div>
+        <div class="font-ctl">
+          <button id="fontDown" title="کوچک‌تر">ا-</button>
+          <button id="fontUp" title="بزرگ‌تر">ا+</button>
+        </div>
+      </div>
+      <div class="editor-wrap">
+        <div class="gutter" id="gutter"></div>
+        <div class="code-area">
+          <pre id="hl" class="code-layer" aria-hidden="true"></pre>
+          <textarea id="code" class="code-layer" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+        </div>
+      </div>
+      <div id="chips"></div>
+      <div class="statusbar">
+        <span id="status">آماده</span>
+        <span id="pos">سطر ۱</span>
+      </div>
+    </div>
+
+    <div class="card out-card">
+      <h2>🖥 خروجی</h2>
+      <pre id="out">برنامه‌ات رو اجرا کن تا نتیجه رو اینجا ببینی.</pre>
+      <div id="err"></div>
+      <div class="meta" id="meta"></div>
+    </div>
+  </div>
+
+  <!-- ستون کنار -->
+  <div class="side">
+    <div class="card">
+      <h2>⌨ ورودی‌ها <small style="font-weight:400;color:var(--muted)">(هر سطر = یک «بپرس»)</small></h2>
+      <textarea class="inputs" id="inputs" placeholder="مثلاً:&#10;علی&#10;۱۷"></textarea>
+    </div>
+
+    <div class="card">
+      <h2>🎨 رنگ‌ها یعنی چی؟</h2>
+      <div class="hint">
+        <span class="dot d-kw"></span><b>ساختار زبان</b> — اگر، وگرنه، برای هر، تابع…<br>
+        <span class="dot d-built"></span><b>تابع‌های آماده</b> — بگو، بپرس، طول، امروز…<br>
+        <span class="dot d-str"></span><b>متن</b> — بین گیومه<br>
+        <span class="dot d-num"></span><b>عدد</b><br>
+        <span class="dot d-opw"></span><b>اپراتور کلمه‌ای</b> — بزرگتر از، ضربدر، برابر…<br>
+        <span class="dot d-cmt"></span><b>کامنت</b> — با ## که برای آدم‌هاست
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💡 راهنمای سریع</h2>
+      <div class="hint">
+        یه کلمه از زبان رو تایپ کن (مثل <b>اگر</b> یا <b>برای</b>) — همون لحظه
+        <b>قالب آماده</b> زیر ویرایشگر میاد؛ با <b>Tab</b> یا کلیک، کل ساختار با تورفتگی میاد سر جاش.<br>
+        <b>Ctrl+Enter</b> اجرا • <b>Tab</b> تورفتگی و پذیرش قالب • کدت خودکار ذخیره می‌شه.
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+"use strict";
+/* ───────────────── رنگ‌آمیزی کد ───────────────── */
+const KW = new Set(["اگر","وگرنه","تا","وقتی","که","برای","هر","از","در","تابع","برگردان","بشکن","ادامه"]);
+const VAL = new Set(["درست","غلط","پوچ"]);
+const OP1 = new Set(["برابر","نابرابر","ضربدر","باقیمانده"]);
+const BIO = new Set(["بزرگتر","کوچکتر"]);
+const BUILT = new Set(["بگو","بنویس","بپرس","بگیر","طول","عدد","متن","گرد","تصادفی","امروز"]);
+const strip = s => s.replace(/\u200c/g,"");
+const TOKEN_RE = /("(?:[^"\\\n]|\\.)*"?|«[^»]*»?|#[^\n]*|[0-9\u06F0-\u06F9\u0660-\u0669]+(?:[.٫][0-9\u06F0-\u06F9\u0660-\u0669]+)?|[\u0600-\u06FF\u200c_]+|\n|[^\S\n]+|[\s\S])/g;
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function span(cls,t){return '<span class="tk-'+cls+'">'+esc(t)+'</span>';}
+
+function highlight(code){
+  const toks=[]; let m;
+  TOKEN_RE.lastIndex=0;
+  while((m=TOKEN_RE.exec(code))!==null){
+    const t=m[0]; let cls="plain";
+    if(t[0]==="#")cls="cmt";
+    else if(t[0]==='"'||t[0]==="«")cls="str";
+    else if(/^[0-9\u06F0-\u06F9\u0660-\u0669]/.test(t))cls="num";
+    else if(/^[\u0600-\u06FF\u200c_]+$/.test(t))cls="fa";
+    toks.push({t,cls});
+  }
+  const fa=i=>toks[i]&&toks[i].cls==="fa";
+  const w=i=>toks[i]?strip(toks[i].t):"";
+  for(let i=0;i<toks.length;i++){
+    if(!fa(i))continue;
+    const x=w(i);
+    if(x==="تا"&&w(i+1)==="وقتی"&&w(i+2)==="که"){toks[i].cls=toks[i+1].cls=toks[i+2].cls="kw";i+=2;continue;}
+    if(x==="برای"&&w(i+1)==="هر"){toks[i].cls=toks[i+1].cls="kw";i++;continue;}
+    if(BIO.has(x)&&(w(i+1)==="از"||w(i+1)==="مساوی")){toks[i].cls=toks[i+1].cls="opw";i++;continue;}
+    if((x==="از"||x==="مساوی")&&BIO.has(w(i-1))){toks[i].cls="opw";continue;}
+    if(x==="تقسیم"&&w(i+1)==="بر"){toks[i].cls=toks[i+1].cls="opw";i++;continue;}
+    if(x==="بر"&&w(i-1)==="تقسیم"){toks[i].cls="opw";continue;}
+    if(KW.has(x))toks[i].cls="kw";
+    else if(VAL.has(x))toks[i].cls="kw";
+    else if(OP1.has(x))toks[i].cls="opw";
+    else if(BUILT.has(x))toks[i].cls="built";
+  }
+  return toks.map(t=>t.cls==="plain"?esc(t.t):span(t.cls,t.t)).join("")+"\n";
+}
+
+/* ───────────────── قالب‌ها ───────────────── */
+const CARET="\u0001";
+const SNIPPETS=[
+  {key:"اگر",       label:"اگر / وگرنه",        tpl:"اگر "+CARET+"\n    \nوگرنه\n    "},
+  {key:"وگرنه",     label:"وگرنه",              tpl:"\nوگرنه\n    "+CARET},
+  {key:"تا وقتی که",label:"حلقه تا وقتی که",     tpl:"تا وقتی که "+CARET+"\n    "},
+  {key:"برای هر",   label:"حلقه برای هر",        tpl:"برای هر عدد از ۱ تا ۱۰\n    "+CARET},
+  {key:"تابع",      label:"تعریف تابع",          tpl:"تابع نام("+CARET+")\n    \n"},
+  {key:"برگردان",   label:"برگردان",             tpl:"برگردان "+CARET},
+  {key:"بگو",       label:"بگو",                 tpl:"بگو("+CARET+")"},
+  {key:"بپرس",      label:"بپرس",                tpl:"بپرس("+CARET+")"},
+  {key:"لیست",      label:"لیست",                tpl:"["+CARET+"]"},
+  {key:"امروز",     label:"تاریخ امروز",         tpl:"امروز("+CARET+")"},
+];
+
+/* ───────────────── ویرایشگر ───────────────── */
+const ta=document.getElementById("code");
+const hl=document.getElementById("hl");
+const gutter=document.getElementById("gutter");
+const chips=document.getElementById("chips");
+const statusEl=document.getElementById("status");
+const posEl=document.getElementById("pos");
+
+function update(){
+  hl.innerHTML=highlight(ta.value);
+  hl.scrollTop=ta.scrollTop; hl.scrollLeft=ta.scrollLeft;
+  const n=ta.value.split("\n").length;
+  if(gutter.childElementCount!==n){
+    let h=""; for(let i=1;i<=n;i++)h+="<div>"+faNum(i)+"</div>";
+    gutter.innerHTML=h;
+  }
+  gutter.scrollTop=ta.scrollTop;
+  updateChips(); updatePos(); saveSoon();
+}
+function faNum(n){return String(n).replace(/[0-9]/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);}
+
+ta.addEventListener("scroll",()=>{hl.scrollTop=ta.scrollTop;hl.scrollLeft=ta.scrollLeft;gutter.scrollTop=ta.scrollTop;});
+ta.addEventListener("input",update);
+ta.addEventListener("click",()=>{updatePos();updateChips();});
+ta.addEventListener("keyup",()=>{updatePos();updateChips();});
+
+function updatePos(){
+  const upto=ta.value.slice(0,ta.selectionStart);
+  const line=upto.split("\n").length;
+  posEl.textContent="سطر "+faNum(line);
+}
+document.addEventListener("selectionchange",()=>{if(document.activeElement===ta)updatePos();});
+
+/* ── پیشنهاد قالب ── */
+function currentWord(){
+  const code=ta.value,p=ta.selectionStart;
+  let s=p; while(s>0&&/[\u0600-\u06FF\u200c_]/.test(code[s-1]))s--;
+  return {word:code.slice(s,p),start:s,end:p};
+}
+let liveChips=[];
+function updateChips(){
+  const cw=currentWord();
+  if(!cw.word){chips.innerHTML="";liveChips=[];return;}
+  const q=strip(cw.word);
+  liveChips=SNIPPETS.filter(s=>strip(s.key).startsWith(q));
+  if(!liveChips.length){chips.innerHTML="";return;}
+  chips.innerHTML="";
+  const tag=document.createElement("span");
+  tag.style.cssText="font-size:12px;color:var(--muted);align-self:center";
+  tag.textContent="قالب آماده (Tab):";
+  chips.appendChild(tag);
+  liveChips.forEach(s=>{
+    const b=document.createElement("button");
+    b.className="tpl-btn"; b.textContent=s.label;
+    b.onclick=()=>applySnippet(s,cw.start,cw.end);
+    chips.appendChild(b);
+  });
+}
+function applySnippet(sn,wStart,wEnd){
+  const code=ta.value;
+  const caret=sn.tpl.indexOf(CARET);
+  const text=sn.tpl.replace(CARET,"");
+  ta.value=code.slice(0,wStart)+text+code.slice(wEnd);
+  const p=wStart+(caret>=0?caret:text.length);
+  ta.focus(); ta.setSelectionRange(p,p); update();
+}
+
+/* ── کیبورد ── */
+ta.addEventListener("keydown",e=>{
+  if(e.key==="Tab"){
+    e.preventDefault();
+    if(liveChips.length){const cw=currentWord();applySnippet(liveChips[0],cw.start,cw.end);return;}
+    ta.setRangeText("    ",ta.selectionStart,ta.selectionEnd,"end");update();return;
+  }
+  if(e.key==="Enter"&&!e.shiftKey&&!e.ctrlKey){
+    e.preventDefault();
+    const p=ta.selectionStart,lineStart=ta.value.lastIndexOf("\n",p-1)+1;
+    const line=ta.value.slice(lineStart,p);
+    const indent=(line.match(/^[ ]*/)||[""])[0];
+    ta.setRangeText("\n"+indent,ta.selectionStart,ta.selectionEnd,"end");update();return;
+  }
+  if(e.key==="Escape"){chips.innerHTML="";liveChips=[];}
+});
+document.addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();run();}
+});
+
+/* ── ذخیره خودکار ── */
+let saveTimer=null;
+function saveSoon(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{localStorage.setItem("goya-ide-code",ta.value);}catch(e){}},400);}
+
+/* ───────────────── اجرا ───────────────── */
+const runBtn=document.getElementById("runBtn");
+const outEl=document.getElementById("out");
+const errEl=document.getElementById("err");
+const metaEl=document.getElementById("meta");
+
+async function run(){
+  runBtn.disabled=true; statusEl.textContent="در حال اجرا…";
+  errEl.style.display="none"; errEl.textContent="";
+  const inputs=ta2inputs();
+  try{
+    const res=await fetch("/api/run",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({code:ta.value,inputs})});
+    const data=await res.json();
+    outEl.textContent=data.output||"";
+    if(data.ok){
+      statusEl.textContent="تمام شد ✓";
+      metaEl.innerHTML="<span>⏱ "+faNum(String(data.elapsed))+" میلی‌ثانیه</span>";
+    }else{
+      statusEl.textContent="خطا داشت";
+      errEl.textContent=data.error; errEl.style.display="block";
+      metaEl.innerHTML="<span>⏱ "+faNum(String(data.elapsed))+" میلی‌ثانیه</span>";
+    }
+  }catch(ex){
+    statusEl.textContent="ارتباط با سرور قطع شد";
+    outEl.textContent="";
+  }
+  runBtn.disabled=false;
+}
+function ta2inputs(){
+  const v=document.getElementById("inputs").value;
+  const lines=v.split("\n");
+  if(lines.length&&lines[lines.length-1]==="")lines.pop();
+  return lines;
+}
+runBtn.onclick=run;
+
+/* ───────────────── نمونه‌ها ───────────────── */
+const examplesSel=document.getElementById("examples");
+let examples=[];
+async function loadExamples(){
+  try{
+    const r=await fetch("/api/examples");
+    const data=await r.json();
+    examples=data.examples;
+    examples.forEach((ex,i)=>{
+      const o=document.createElement("option");
+      o.value=String(i); o.textContent="📄 "+ex.title;
+      examplesSel.appendChild(o);
+    });
+  }catch(e){}
+}
+examplesSel.onchange=()=>{
+  const ex=examples[Number(examplesSel.value)];
+  if(!ex)return;
+  ta.value=ex.code; examplesSel.value=""; update();
+};
+
+/* ───────────────── فونت و تم ───────────────── */
+document.getElementById("fontUp").onclick=()=>setFont(1);
+document.getElementById("fontDown").onclick=()=>setFont(-1);
+function setFont(d){
+  const cur=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--code-size"));
+  const next=Math.min(26,Math.max(13,cur+d));
+  document.documentElement.style.setProperty("--code-size",next+"px");
+}
+const themeBtn=document.getElementById("themeBtn");
+themeBtn.onclick=()=>{
+  const dark=document.body.getAttribute("data-theme")==="dark";
+  document.body.setAttribute("data-theme",dark?"":"dark");
+  themeBtn.textContent=dark?"🌙 تم تیره":"☀️ تم روشن";
+  try{localStorage.setItem("goya-ide-theme",dark?"":"dark");}catch(e){}
+};
+
+/* ───────────────── شروع ───────────────── */
+(function init(){
+  try{
+    const saved=localStorage.getItem("goya-ide-code");
+    if(saved)ta.value=saved;
+    const th=localStorage.getItem("goya-ide-theme");
+    if(th==="dark"){document.body.setAttribute("data-theme","dark");themeBtn.textContent="☀️ تم روشن";}
+  }catch(e){}
+  if(!ta.value){
+    ta.value='## به محیط گویا خوش اومدی!\n## یه کلمه تایپ کن: «اگر» یا «برای» — قالب آماده میاد\n\nبگو("سلام دنیا!")\nبگو("امروز: " + امروز())\n';
+  }
+  update(); loadExamples();
+})();
+</script>
+</body>
+</html>

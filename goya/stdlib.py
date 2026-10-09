@@ -102,8 +102,7 @@ def _bi_print(args):
     return None
 
 
-def _bi_input(args):
-    prompt = display(args[0]) if args else ""
+def _default_input(prompt=""):
     try:
         return input(prompt)
     except EOFError:
@@ -163,8 +162,21 @@ def _bi_today(args):
     return to_persian_digits("{}/{:02d}/{:02d}".format(jy, jm, jd))
 
 
-def install_builtins(env):
-    """ریختن تابع‌های داخلی تو محیط سراسری — بنویس و بگیر اسم مستعارن"""
+def install_builtins(env, input_fn=None):
+    """ریختن تابع‌های داخلی تو محیط سراسری — بنویس و بگیر اسم مستعارن
+
+    input_fn: جایگزین input() — محیط IDE ازش استفاده می‌کنه (صف ورودی).
+    """
+    if input_fn is None:
+        input_fn = _default_input
+
+    def _bi_input(args):
+        prompt = display(args[0]) if args else ""
+        try:
+            return input_fn(prompt)
+        except EOFError:
+            return ""
+
     env.define("بگو", Builtin("بگو", _bi_print))
     env.define("بنویس", Builtin("بنویس", _bi_print))
     env.define("بپرس", Builtin("بپرس", _bi_input))

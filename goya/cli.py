@@ -3,6 +3,7 @@
 
     goya run برنامه.goya    اجرای فایل
     goya repl               محیط تعاملی
+    goya ide                محیط گرافیکی (مرورگر)
     goya version            شماره نسخه
 """
 
@@ -50,6 +51,7 @@ def main(argv=None):
     run_parser = sub.add_parser("run", help="اجرای یک فایل گویا")
     run_parser.add_argument("file", help="مسیر فایل .goya")
     sub.add_parser("repl", help="محیط تعاملی گویا")
+    sub.add_parser("ide", help="محیط گرافیکی گویا (مرورگر)")
 
     args = parser.parse_args(argv)
 
@@ -57,6 +59,10 @@ def main(argv=None):
         sys.exit(_run_file(args.file))
     if args.cmd == "repl":
         from .repl import start
+        start()
+        sys.exit(0)
+    if args.cmd == "ide":
+        from .ide import start
         start()
         sys.exit(0)
     parser.print_help()

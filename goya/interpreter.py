@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """مفسر گویا: اجرای درخت برنامه (tree-walking)"""
 
+import time
+
 from .errors import GoyaRuntimeError
 from .parser import (
     Assign, Bin, Break, Call, Const, Continue, ExprStmt, ForIn, ForRange,
@@ -68,11 +70,27 @@ class Function:
 
 
 class Interpreter:
-    def __init__(self):
+    def __init__(self, input_fn=None, time_limit=10.0):
         self.global_env = Env()
-        install_builtins(self.global_env)
+        install_builtins(self.global_env, input_fn=input_fn)
+        self.time_limit = time_limit
+        self._started = time.monotonic()
+        self._steps = 0
+
+    def reset_clock(self):
+        """شروع دوباره‌ی ساعت محافظ — برای REPL که با یک مفسر چند ورودی اجرا می‌شه"""
+        self._started = time.monotonic()
+        self._steps = 0
+
+    def _check_time(self):
+        if self.time_limit is not None:
+            if time.monotonic() - self._started > self.time_limit:
+                raise GoyaRuntimeError(
+                    "برنامه زیادی طول کشید — حلقه بی‌نهایت گرفتی؟"
+                )
 
     def run(self, program):
+        self.reset_clock()
         for st in program.statements:
             self.exec_stmt(st, self.global_env)
 
@@ -82,6 +100,9 @@ class Interpreter:
     # ─── اجرای دستورها ───
 
     def exec_stmt(self, st, env):
+        self._steps += 1
+        if self._steps % 2048 == 0:
+            self._check_time()
         if isinstance(st, ExprStmt):
             self.eval_expr(st.expr, env)
         elif isinstance(st, Assign):
