@@ -27,4 +27,4 @@ goya = "goya.cli:main"
 packages = ["goya"]
 
 [tool.setuptools.package-data]
-goya = ["ide_static/*.html"]
+goya = ["ide_static/*.html", "ide_static/*.webp", "ide_static/*.png", "studio_static/*.html"]

@@ -60,6 +60,8 @@ def main(argv=None):
     run_parser.add_argument("file", help="مسیر فایل .goya")
     sub.add_parser("repl", help="محیط تعاملی گویا")
     sub.add_parser("ide", help="محیط گرافیکی گویا (مرورگر)")
+    studio_p = sub.add_parser("studio", help="گویا استودیو — طراحی ویژوال نرم‌افزار")
+    studio_p.add_argument("file", nargs="?", help="پروژه .goya برای باز کردن (اختیاری)")
 
     args = parser.parse_args(argv)
 
@@ -72,6 +74,10 @@ def main(argv=None):
     if args.cmd == "ide":
         from .ide import start
         start()
+        sys.exit(0)
+    if args.cmd == "studio":
+        from .studio import start
+        start(args.file)
         sys.exit(0)
     parser.print_help()
     sys.exit(0)

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>گویا استودیو</title>
+<link rel="icon" type="image/png" href="../ide_static/favicon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" media="print" onload="this.media='all'">
+<style>
+:root{
+  --bg:#FFF3E4; --card:#ffffff; --text:#1E2A4A; --muted:#8A93A6;
+  --purple:#7048E8; --purple2:#9775FA; --coral:#E5484D;
+  --tint-blue:#E3F2FF; --tint-violet:#F1EDFF; --tint-yellow:#FFF6DC; --tint-mint:#E4FAF0;
+  --line:rgba(30,42,74,.12); --plain:#1E2A4A;
+  --kw:#E5484D; --built:#7048E8; --str:#0CA678; --num:#3B82F6;
+  --cmt:#9AA3B8; --opw:#F76707;
+  --code-size:16px;
+}
+[data-theme="dark"]{
+  --bg:#111827; --card:#18213A; --text:#F8FAFC; --muted:#CBD5E1;
+  --tint-blue:#17263F; --tint-violet:#221E44; --tint-yellow:#2B2517; --tint-mint:#113227;
+  --kw:#FF8787; --built:#9775FA; --str:#38D9A9; --num:#74C0FC;
+  --cmt:#64748B; --opw:#FFA94D; --plain:#E2E8F0;
+  --line:rgba(248,250,252,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Vazirmatn,'Segoe UI',Tahoma,sans-serif;min-height:100vh}
+header{display:flex;align-items:center;gap:12px;padding:12px 22px 8px}
+.logo-img{height:52px;display:block}
+.brand{font-size:22px;font-weight:900}
+#projName{font:700 14px Vazirmatn,Tahoma;border:1.5px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:7px 12px;width:200px;text-align:center;outline:none}
+.spacer{flex:1}
+.tbtn{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--line);color:var(--text);border-radius:999px;padding:7px 14px;font:600 13.5px Vazirmatn,Tahoma;cursor:pointer;transition:.13s}
+.tbtn:hover{border-color:var(--purple2)}
+.tbtn img{width:16px;height:16px}
+.cicon{width:16px;height:16px}
+.tbtn.run{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;border:0;box-shadow:0 4px 14px rgba(112,72,232,.35);padding:9px 22px;font-weight:800}
+.tbtn.run:disabled{opacity:.6;cursor:wait}
+
+.tabbar{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:0 18px;display:flex;gap:6px}
+.tabbtn2{border:1.5px solid var(--line);border-bottom:0;background:var(--card);color:var(--muted);border-radius:14px 14px 0 0;padding:9px 26px;font:700 14.5px Vazirmatn,Tahoma;cursor:pointer}
+.tabbtn2.on{color:var(--purple);background:var(--card);border-bottom:2.5px solid var(--purple)}
+
+main{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:0 18px 18px}
+.view{display:none}
+.view.on{display:block}
+
+/* ───── طراح ───── */
+.designer{display:grid;grid-template-columns:200px 1fr 250px;gap:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.panel h3{margin:0;padding:11px 14px;font-size:13.5px;background:var(--tint-violet);display:flex;gap:7px;align-items:center}
+.tools{display:flex;flex-direction:column;gap:8px;padding:12px}
+.tool{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;cursor:grab;background:var(--card);transition:.12s;font-weight:700;font-size:14px}
+.tool:hover{border-color:var(--purple2);transform:translateY(-1px)}
+.tool.placing{border-style:solid;border-color:var(--purple);background:var(--tint-violet)}
+.tool .tico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900}
+.canvas-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;overflow:auto;display:flex;justify-content:center;align-items:flex-start;min-height:560px}
+.form-window{background:#F8FAFC;border-radius:10px;box-shadow:0 10px 34px rgba(60,40,120,.18);position:relative;overflow:hidden}
+.form-title{height:34px;display:flex;align-items:center;padding:0 12px;font-weight:700;font-size:13px;color:#fff}
+.ctrl{position:absolute;cursor:move;user-select:none;font-family:Vazirmatn,Tahoma}
+.ctrl.btn-c{background:linear-gradient(135deg,#7048E8,#9775FA);color:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13.5px;box-shadow:0 3px 9px rgba(112,72,232,.30)}
+.ctrl.label-c{color:#1E2A4A;font-weight:700;font-size:13.5px;display:flex;align-items:center}
+.ctrl.entry-c{background:#fff;border:1.5px solid #C7CDD8;border-radius:8px;color:#1E2A4A;display:flex;align-items:center;padding:0 8px;font-size:13px;color-mute:#8A93A6}
+.ctrl.sel{outline:3px solid #2DD4BF;outline-offset:1px}
+.props{display:flex;flex-direction:column;gap:10px;padding:14px}
+.prow{display:flex;flex-direction:column;gap:4px}
+.prow label{font-size:12.5px;color:var(--muted);font-weight:700}
+.prow input{border:1.5px solid var(--line);border-radius:9px;padding:7px 10px;font:600 13.5px Vazirmatn,Tahoma;background:var(--code-bg,#fff);color:var(--text);outline:none;width:100%}
+.prow input:focus{border-color:var(--purple2)}
+.pnote{font-size:12px;color:var(--muted);line-height:1.9}
+
+/* ───── کد ───── */
+.editor-wrap{display:flex;height:560px;background:#FDFCFF;border-radius:0 0 16px 16px;overflow:hidden}
+.gutter{width:46px;padding:14px 6px 14px 0;text-align:center;color:var(--gutter-num,#A79EF0);font:600 var(--code-size)/1.9 Vazirmatn,Tahoma;overflow:hidden;user-select:none;background:var(--tint-violet);flex-shrink:0}
+.code-area{position:relative;flex:1;direction:rtl}
+.code-layer{margin:0;padding:14px 16px;font:500 var(--code-size)/1.9 Vazirmatn,Tahoma;white-space:pre-wrap;word-wrap:break-word;direction:rtl;text-align:right;border:0}
+#hl{position:absolute;inset:0;overflow:hidden;pointer-events:none;color:var(--plain)}
+#codeTa{position:absolute;inset:0;width:100%;height:100%;background:transparent;color:transparent;caret-color:var(--caret,#7048E8);resize:none;outline:none;overflow:auto}
+#codeTa::selection{background:rgba(112,72,232,.18)}
+.tk-kw{color:var(--kw);font-weight:800}
+.tk-built{color:var(--built);font-weight:800}
+.tk-str{color:var(--str);font-weight:600}
+.tk-num{color:var(--num);font-weight:700}
+.tk-cmt{color:var(--cmt);font-style:italic}
+.tk-opw{color:var(--opw);font-weight:700}
+
+/* ───── خروجی ───── */
+.out-card{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+#out{margin:0;padding:14px 18px;background:#111827;color:#F8FAFC;font:500 14px/1.9 Vazirmatn,Tahoma;white-space:pre-wrap;direction:rtl;text-align:right;min-height:90px;max-height:220px;overflow:auto}
+.hintbar{padding:7px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo-img" src="../ide_static/logo.png" alt="گویا">
+  <div class="brand">گویا استودیو</div>
+  <input id="projName" value="برنامه بدون نام" spellcheck="false">
+  <div class="spacer"></div>
+  <button class="tbtn" id="newBtn"><img src="../ide_static/icons/file.webp" alt="">جدید</button>
+  <button class="tbtn" id="openBtn"><img src="../ide_static/icons/bulb.webp" alt="">باز کردن</button>
+  <button class="tbtn" id="saveBtn"><img src="../ide_static/icons/download.webp" alt="">ذخیره</button>
+  <button class="tbtn run" id="runBtn"><img src="../ide_static/icons/play.webp" alt=""> اجرا <span style="font-size:11px;opacity:.85">Ctrl+Enter</span></button>
+  <button class="tbtn" id="themeBtn"><img class="cicon" id="themeIc" src="../ide_static/icons/moon.webp" alt=""><span id="themeLbl">تم تیره</span></button>
+</header>
+
+<div class="tabbar">
+  <button class="tabbtn2 on" id="tabDesigner">طراح فرم</button>
+  <button class="tabbtn2" id="tabCode"><img class="cicon" src="../ide_static/icons/keyboard.webp" alt="">کد</button>
+</div>
+
+<main>
+  <!-- ── نمای طراح ── -->
+  <div class="view on" id="viewDesigner">
+    <div class="designer">
+      <div class="panel">
+        <h3><img class="cicon" src="../ide_static/icons/file.webp" alt="">جعبه‌ابزار</h3>
+        <div class="tools">
+          <div class="tool" data-type="دکمه"><span class="tico" style="background:linear-gradient(135deg,#7048E8,#9775FA)">ب</span>دکمه</div>
+          <div class="tool" data-type="برچسب"><span class="tico" style="background:#0CA678">م</span>برچسب</div>
+          <div class="tool" data-type="کادر"><span class="tico" style="background:#3B82F6">▭</span>کادر متنی</div>
+        </div>
+        <div class="pnote" style="padding:0 14px 12px">روی ابزار کلیک کن، بعد روی <b>بوم فرم</b> کلیک کن تا کنترل بیفته. برای جابه‌جایی بکشش.</div>
+      </div>
+
+      <div class="canvas-wrap">
+        <div class="form-window" id="formWindow">
+          <div class="form-title" id="formTitle">برنامه من</div>
+          <div id="canvas" style="position:relative;width:340px;height:206px"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3><img class="cicon" src="../ide_static/icons/bulb.webp" alt="">مشخصات</h3>
+        <div class="props" id="ctrlProps" style="display:none">
+          <div class="prow"><label>نام کنترل (برای رویداد)</label><input id="pName" spellcheck="false"></div>
+          <div class="prow"><label>متن</label><input id="pText"></div>
+          <div class="prow"><label>X — از راست</label><input id="pX" type="number"></div>
+          <div class="prow"><label>Y — از بالا</label><input id="pY" type="number"></div>
+          <div class="pnote">دبل‌کلیک روی کنترل توی بوم → استاب رویداد کلیک توی تب کد ساخته می‌شه.</div>
+        </div>
+        <div class="props" id="formProps">
+          <div class="prow"><label>عنوان پنجره</label><input id="fTitle"></div>
+          <div class="prow"><label>پهنا</label><input id="fW" type="number"></div>
+          <div class="prow"><label>ارتفاع</label><input id="fH" type="number"></div>
+          <div class="pnote">روی کنترل‌ها کلیک کنی مشخصاتشون اینجا میاد. بدون انتخاب = مشخصات خود پنجره.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── نمای کد ── -->
+  <div class="view" id="viewCode">
+    <div class="panel" style="border-radius:16px 16px 0 0;border-bottom:0">
+      <div class="toolbar" style="display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);align-items:center">
+        <span style="font-size:13px;color:var(--muted);font-weight:700">کد گویا — بخش فرم رو دست نزن، طراح خودش به‌روز می‌کنه</span>
+      </div>
+      <div class="editor-wrap" style="border-radius:0">
+        <div class="gutter" id="gutter"></div>
+        <div class="code-area">
+          <pre id="hl" class="code-layer" aria-hidden="true"></pre>
+          <textarea id="codeTa" class="code-layer" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="out-card">
+    <div style="padding:10px 16px 0;font-size:13px;font-weight:800">خروجی</div>
+    <pre id="out">با دکمه‌ی اجرا، برنامه‌ات بالا میاد؛ پیام‌ها و خطاهاش اینجا نمایش داده می‌شه.</pre>
+  </div>
+</main>
+
+<div class="hintbar" style="position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:6px 22px 14px">
+  <span id="status">آماده</span>
+  <span>Ctrl+Enter اجرا • Ctrl+S ذخیره • کد خودکار ذخیره می‌شه</span>
+</div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+
+/* ───────── وضعیت پروژه ───────── */
+const TYPES = {
+  "دکمه":   {w: 120, h: 34,  cls: "btn-c",   factory: "دکمه"},
+  "برچسب":  {w: 140, h: 26,  cls: "label-c", factory: "برچسب"},
+  "کادر":   {w: 160, h: 32,  cls: "entry-c", factory: "کادر"},
+};
+const state = {
+  form: {title: "برنامه من", w: 340, h: 240},
+  controls: [],   // {id, type, name, text, x, y}
+  seq: {دکمه: 0, برچسب: 0, کادر: 0},
+  selected: null, // id
+};
+let projPath = "";
+
+/* ───────── رنگ‌آمیزی کد ───────── */
+const KW = new Set(["اگر","وگرنه","تا","وقتی","که","برای","هر","از","در","تابع","برگردان","بشکن","ادامه"]);
+const VAL = new Set(["درست","غلط","پوچ"]);
+const OP1 = new Set(["برابر","نابرابر","ضربدر","باقیمانده"]);
+const BIO = new Set(["بزرگتر","کوچکتر"]);
+const BUILT = new Set(["بگو","بنویس","بپرس","بگیر","طول","عدد","متن","گرد","تصادفی","امروز","فرم","دکمه","برچسب","کادر","پیام"]);
+const strip = s => s.replace(/\u200c/g,"");
+const TOKEN_RE = /("(?:[^"\\\n]|\\.)*"?|«[^»]*»?|#[^\n]*|[0-9\u06F0-\u06F9\u0660-\u0669]+(?:[.٫][0-9\u06F0-\u06F9\u0660-\u0669]+)?|[\u0600-\u06FF\u200c_]+|\n|[^\S\n]+|[\s\S])/g;
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function highlight(code){
+  const toks=[]; let m; TOKEN_RE.lastIndex=0;
+  while((m=TOKEN_RE.exec(code))!==null){
+    const t=m[0]; let cls="plain";
+    if(t[0]==="#")cls="cmt";
+    else if(t[0]==='"'||t[0]==="«")cls="str";
+    else if(/^[0-9\u06F0-\u06F9\u0660-\u0669]/.test(t))cls="num";
+    else if(/^[\u0600-\u06FF\u200c_]+$/.test(t))cls="fa";
+    toks.push({t,cls});
+  }
+  const fa=i=>toks[i]&&toks[i].cls==="fa";
+  const w=i=>toks[i]?strip(toks[i].t):"";
+  for(let i=0;i<toks.length;i++){
+    if(!fa(i))continue;
+    const x=w(i);
+    if(x==="تا"&&w(i+1)==="وقتی"&&w(i+2)==="که"){toks[i].cls=toks[i+1].cls=toks[i+2].cls="kw";i+=2;continue;}
+    if(x==="برای"&&w(i+1)==="هر"){toks[i].cls=toks[i+1].cls="kw";i++;continue;}
+    if(BIO.has(x)&&(w(i+1)==="از"||w(i+1)==="مساوی")){toks[i].cls=toks[i+1].cls="opw";i++;continue;}
+    if((x==="از"||x==="مساوی")&&BIO.has(w(i-1))){toks[i].cls="opw";continue;}
+    if(x==="تقسیم"&&w(i+1)==="بر"){toks[i].cls=toks[i+1].cls="opw";i++;continue;}
+    if(x==="بر"&&w(i-1)==="تقسیم"){toks[i].cls="opw";continue;}
+    if(KW.has(x)||VAL.has(x))toks[i].cls="kw";
+    else if(OP1.has(x))toks[i].cls="opw";
+    else if(BUILT.has(x))toks[i].cls="built";
+  }
+  return toks.map(t=>t.cls==="plain"?esc(t.t):'<span class="tk-'+t.cls+'">'+esc(t.t)+'</span>').join("")+"\n";
+}
+
+/* ───────── تب‌ها ───────── */
+function showTab(which){
+  $("viewDesigner").className = "view" + (which==="designer" ? " on" : "");
+  $("viewCode").className = "view" + (which==="code" ? " on" : "");
+  $("tabDesigner").className = "tabbtn2" + (which==="designer" ? " on" : "");
+  $("tabCode").className = "tabbtn2" + (which==="code" ? " on" : "");
+}
+$("tabDesigner").onclick = () => showTab("designer");
+$("tabCode").onclick = () => { syncCodeFromState(); showTab("code"); };
+
+/* ───────── طراح ───────── */
+const canvas = $("canvas");
+const faNum = n => String(n).replace(/[0-9]/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+const latin = s => String(s).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+
+function renderCanvas(){
+  canvas.innerHTML = "";
+  canvas.style.width = state.form.w + "px";
+  canvas.style.height = (state.form.h - 34) + "px";
+  $("formWindow").style.width = state.form.w + "px";
+  $("formTitle").textContent = state.form.title;
+  state.controls.forEach(c => {
+    const t = TYPES[c.type];
+    const el = document.createElement("div");
+    el.className = "ctrl " + t.cls + (state.selected === c.id ? " sel" : "");
+    el.style.cssText = "right:" + c.x + "px;top:" + c.y + "px;width:" + t.w + "px;height:" + t.h + "px";
+    el.textContent = c.text;
+    el.dataset.id = c.id;
+    if (c.type === "کادر") el.textContent = c.text;
+    el.onmousedown = e => startDrag(e, c.id);
+    el.ondblclick = () => { select(c.id); ensureStub(c); showTab("code"); };
+    canvas.appendChild(el);
+  });
+}
+
+function select(id){
+  state.selected = id;
+  renderCanvas(); renderProps();
+}
+function renderProps(){
+  const c = state.controls.find(x => x.id === state.selected);
+  if (!c){ $("ctrlProps").style.display = "none"; $("formProps").style.display = "block"; bindFormProps(); return; }
+  $("ctrlProps").style.display = "flex"; $("formProps").style.display = "none";
+  $("pName").value = c.name; $("pText").value = c.text;
+  $("pX").value = latin(String(c.x)); $("pY").value = latin(String(c.y));
+}
+let formBindArmed = false;
+function bindFormProps(){
+  if (formBindArmed) return; formBindArmed = true;
+  $("fTitle").oninput = () => { state.form.title = $("fTitle").value; renderCanvas(); saveSoon(); };
+  $("fW").oninput = () => { state.form.w = Number(latin($("fW").value)) || 340; renderCanvas(); saveSoon(); };
+  $("fH").oninput = () => { state.form.h = Number(latin($("fH").value)) || 240; renderCanvas(); saveSoon(); };
+  $("pName").oninput = () => { const c = cur(); if (c){ c.name = $("pName").value; saveSoon(); } };
+  $("pText").oninput = () => { const c = cur(); if (c){ c.text = $("pText").value; renderCanvas(); saveSoon(); } };
+  $("pX").oninput = () => { const c = cur(); if (c){ c.x = Number(latin($("pX").value)) || 0; renderCanvas(); saveSoon(); } };
+  $("pY").oninput = () => { const c = cur(); if (c){ c.y = Number(latin($("pY").value)) || 0; renderCanvas(); saveSoon(); } };
+}
+function cur(){ return state.controls.find(x => x.id === state.selected); }
+
+/* کلیک روی بوم (خارج کنترل‌ها) → لغو انتخاب */
+canvas.onmousedown = e => {
+  if (e.target === canvas){ state.selected = null; renderCanvas(); renderProps(); }
+};
+
+/* جعبه‌ابزار: کلیک → افزودن کنترل */
+document.querySelectorAll(".tool").forEach(tl => {
+  tl.onclick = () => {
+    const type = tl.dataset.type;
+    const n = ++state.seq[type];
+    const base = type + "_" + faNum(n);
+    const c = { id: type + "_" + Date.now(), type, name: base, text: type === "کادر" ? "" : type + " " + faNum(n), x: 24, y: 24 + (n % 5) * 12 };
+    state.controls.push(c);
+    select(c.id); saveSoon();
+    tl.classList.add("placing"); setTimeout(() => tl.classList.remove("placing"), 350);
+  };
+});
+
+/* درگ جابه‌جایی */
+let drag = null;
+function startDrag(e, id){
+  e.stopPropagation();
+  select(id);
+  const c = state.controls.find(x => x.id === id);
+  drag = { id, sx: e.clientX, sy: e.clientY, ox: c.x, oy: c.y };
+}
+document.addEventListener("mousemove", e => {
+  if (!drag) return;
+  const c = state.controls.find(x => x.id === drag.id);
+  if (!c) return;
+  const snap = v => Math.round(v / 8) * 8;
+  c.x = Math.max(0, Math.min(state.form.w - 60, snap(drag.ox - (e.clientX - drag.sx))));
+  c.y = Math.max(0, Math.min(state.form.h - 80, snap(drag.oy + (e.clientY - drag.sy))));
+  renderCanvas(); renderProps();
+});
+document.addEventListener("mouseup", () => { if (drag){ drag = null; saveSoon(); } });
+
+/* ───────── تولید کد گویا ───────── */
+function generateGoya(){
+  const L = [];
+  L.push("## ┌── بخش فرم (تولیدشده توسط گویا استودیو) ──┐");
+  L.push('پنجره = فرم("' + state.form.title + '"، ' + faNum(state.form.w) + '، ' + faNum(state.form.h) + ')');
+  state.controls.forEach(c => {
+    L.push(c.name + " = " + TYPES[c.type].factory + '("' + c.text + '"، ' + faNum(c.x) + '، ' + faNum(c.y) + ')');
+  });
+  L.push("## └── بخش کد ──┘");
+  L.push("");
+  L.push(codeText);
+  return L.join("\n");
+}
+
+/* بازخوانی پروژه از متن .goya */
+function parseProject(text){
+  const lines = text.split("\n");
+  state.controls = []; state.seq = {دکمه: 0, برچسب: 0, کادر: 0}; state.selected = null;
+  let codeStarted = false;
+  const codeLines = [];
+  const re = /^(\S+)\s*=\s*(فرم|دکمه|برچسب|کادر)\("(.*)"\s*،\s*([۰-۹0-9]+)\s*،\s*([۰-۹0-9]+)\)\s*$/;
+  for (const raw of lines){
+    if (!codeStarted && raw.includes("بخش کد")){ codeStarted = true; continue; }
+    if (!codeStarted){
+      const m = raw.match(re);
+      if (m){
+        const varName = m[1], factory = m[2], txt = m[3];
+        const x = Number(latin(m[4])), y = Number(latin(m[5]));
+        if (factory === "فرم"){
+          state.form = {title: txt, w: x, h: y};
+        } else {
+          state.seq[factory] = (state.seq[factory] || 0) + 1;
+          state.controls.push({id: factory + "_" + Date.now() + "_" + state.seq[factory], type: factory, name: varName, text: txt, x, y});
+        }
+        continue;
+      }
+      if (raw.trim() === "" || raw.trim().startsWith("#")) continue;
+    }
+    if (codeStarted) codeLines.push(raw);
+  }
+  codeText = codeLines.join("\n").replace(/^\n+/, "");
+  if (!state.controls.length && !state.form.title) state.form = {title: "برنامه من", w: 340, h: 240};
+  renderCanvas(); renderProps();
+  $("codeTa").value = codeText; updateCode();
+}
+
+/* ───────── ادیتور کد ───────── */
+const ta = $("codeTa"), hl = $("hl"), gutter = $("gutter");
+let codeText = "";
+function updateCode(){
+  hl.innerHTML = highlight(ta.value);
+  hl.scrollTop = ta.scrollTop; hl.scrollLeft = ta.scrollLeft;
+  const n = ta.value.split("\n").length;
+  if (gutter.childElementCount !== n){
+    let h = ""; for (let i = 1; i <= n; i++) h += "<div>" + faNum(i) + "</div>";
+    gutter.innerHTML = h;
+  }
+  gutter.scrollTop = ta.scrollTop;
+}
+ta.addEventListener("input", () => { codeText = ta.value; updateCode(); saveSoon(); });
+ta.addEventListener("scroll", () => { hl.scrollTop = ta.scrollTop; hl.scrollLeft = ta.scrollLeft; gutter.scrollTop = ta.scrollTop; });
+ta.addEventListener("keydown", e => {
+  if (e.key === "Tab"){
+    e.preventDefault();
+    ta.setRangeText("    ", ta.selectionStart, ta.selectionEnd, "end");
+    codeText = ta.value; updateCode(); return;
+  }
+  if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey){
+    e.preventDefault();
+    const p = ta.selectionStart, ls = ta.value.lastIndexOf("\n", p - 1) + 1;
+    const indent = (ta.value.slice(ls, p).match(/^[ ]*/) || [""])[0];
+    ta.setRangeText("\n" + indent, ta.selectionStart, ta.selectionEnd, "end");
+    codeText = ta.value; updateCode();
+  }
+});
+function syncCodeFromState(){ ta.value = codeText; updateCode(); }
+
+/* استاب رویداد در دبل‌کلیک */
+function ensureStub(c){
+  const fnName = c.name + "_کلیک";
+  if (codeText.includes("تابع " + fnName)) return;
+  if (codeText.trim()) codeText += "\n\n";
+  codeText += "تابع " + fnName + "()\n    \n";
+  $("codeTa").value = codeText; updateCode();
+}
+
+/* ───────── ذخیره / باز / جدید / اجرا ───────── */
+const statusEl = $("status");
+function setStatus(t){ statusEl.textContent = t; }
+function generateProjectText(){ return generateGoya(); }
+
+$("runBtn").onclick = doRun;
+async function doRun(){
+  const code = generateProjectText();
+  setStatus("در حال اجرا…");
+  $("out").textContent = "";
+  try{
+    const res = await window.pywebview.api.run(code);
+    if (res && res.ok === false && res.err){ $("out").textContent = res.err; setStatus("خطای نگارشی"); }
+    else setStatus("پنجره‌ی برنامه باز شد");
+  }catch(e){ setStatus("خطا: " + e); }
+}
+function studioAppendOut(text){
+  $("out").textContent += text + "\n";
+  $("out").scrollTop = $("out").scrollHeight;
+}
+window.studioAppendOut = studioAppendOut;
+
+$("saveBtn").onclick = doSave;
+async function doSave(){
+  const content = generateProjectText();
+  try{
+    const res = await window.pywebview.api.save_project(content);
+    if (res && res.ok){ projPath = res.path; $("projName").value = res.path.split(/[\\/]/).pop(); setStatus("ذخیره شد: " + res.path); }
+    else setStatus("ذخیره لغو شد");
+  }catch(e){ setStatus("خطا در ذخیره"); }
+}
+$("openBtn").onclick = doOpen;
+async function doOpen(){
+  try{
+    const res = await window.pywebview.api.open_project();
+    if (res && res.ok){ projPath = res.path; $("projName").value = res.path.split(/[\\/]/).pop(); parseProject(res.content); showTab("designer"); setStatus("پروژه باز شد: " + res.path); }
+    else setStatus("باز کردن لغو شد");
+  }catch(e){ setStatus("خطا در باز کردن"); }
+}
+$("newBtn").onclick = () => {
+  state.form = {title: "برنامه من", w: 340, h: 240};
+  state.controls = []; state.selected = null;
+  state.seq = {دکمه: 0, برچسب: 0, کادر: 0};
+  codeText = ""; $("codeTa").value = ""; projPath = ""; $("projName").value = "برنامه بدون نام";
+  renderCanvas(); renderProps(); updateCode(); setStatus("پروژه جدید");
+};
+document.addEventListener("keydown", e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter"){ e.preventDefault(); doRun(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === "s"){ e.preventDefault(); doSave(); }
+});
+
+/* ───────── تم ───────── */
+$("themeBtn").onclick = () => {
+  const dark = document.body.getAttribute("data-theme") === "dark";
+  document.body.setAttribute("data-theme", dark ? "" : "dark");
+  $("themeIc").src = dark ? "../ide_static/icons/moon.webp" : "../ide_static/icons/sun.webp";
+  $("themeLbl").textContent = dark ? "تم تیره" : "تم روشن";
+  try{ localStorage.setItem("goya-studio-theme", dark ? "" : "dark"); }catch(e){}
+};
+
+/* ───────── شروع ───────── */
+(async function init(){
+  try{
+    if (localStorage.getItem("goya-studio-theme") === "dark"){
+      document.body.setAttribute("data-theme", "dark");
+      $("themeIc").src = "../ide_static/icons/sun.webp";
+      $("themeLbl").textContent = "تم روشن";
+    }
+  }catch(e){}
+  try{
+    const init = await window.pywebview.api.load_initial();
+    if (init.ok && init.content){ parseProject(init.content); $("projName").value = (init.path.split(/[\\/]/).pop() || "پروژه"); setStatus("پروژه باز شد"); return; }
+  }catch(e){}
+  // پروژه‌ی شروع: ماشین‌حساب نمونه
+  parseProject(
+    '## ┌── بخش فرم (تولیدشده توسط گویا استودیو) ──┐\n' +
+    'پنجره = فرم("ماشین‌حساب گویا"، ۳۴۰، ۲۴۰)\n' +
+    'عدد۱ = کادر("عدد اول"، ۲۰، ۲۰)\n' +
+    'عدد۲ = کادر("عدد دوم"، ۲۰، ۷۰)\n' +
+    'محاسبه = دکمه("محاسبه کن"، ۲۰، ۱۲۰)\n' +
+    'نتیجه = برچسب("جواب اینجا میاد…", ۲۰، ۱۷۰)\n' +
+    '## └── بخش کد ──┘\n' +
+    'تابع محاسبه_کلیک()\n' +
+    '    الف = عدد(عدد۱.متن)\n' +
+    '    ب = عدد(عدد۲.متن)\n' +
+    '    نتیجه.متن = "جواب: " + متن(الف + ب)\n'
+  );
+  setStatus("پروژه نمونه آماده‌ست — بکش، بنداز، اجرا کن!");
+})();
+</script>
+</body>
+</html>
