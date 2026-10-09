@@ -17,6 +17,15 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _STUDIO_STATIC = os.path.join(_HERE, "studio_static")
 
 
+def _log(msg):
+    """لاگ سبک برای اشکال‌زدایی — کنار فایل موقت"""
+    try:
+        with open(os.path.join(tempfile.gettempdir(), "goya_studio.log"), "a", encoding="utf-8") as f:
+            f.write(msg + chr(10))
+    except OSError:
+        pass
+
+
 class StudioApi:
     """پل بین رابط وب استودیو و پایتون (فایل، اجرا، دیالوگ‌ها)"""
 
@@ -46,8 +55,10 @@ class StudioApi:
             f.write(code)
 
         env = dict(os.environ)
+        cmd = [sys.executable, "-m", "goya", "run", path]
+        _log("spawn: " + " ".join(cmd))
         self._proc = subprocess.Popen(
-            [sys.executable, "-m", "goya", "run", path],
+            cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
@@ -76,6 +87,8 @@ class StudioApi:
             self.window.evaluate_js("studioAppendOut({});".format(payload))
         except Exception:
             pass
+        finally:
+            _log("child exited: " + str(proc.returncode))
 
     # ── فایل پروژه ──
 
