@@ -212,5 +212,19 @@ class TestLoopGuard(unittest.TestCase):
         self.assertIn("طول کشید", ctx.exception.message)
 
 
+class TestBreakOutsideLoop(unittest.TestCase):
+    def test_break_at_top_level(self):
+        err = run_error("بشکن")
+        self.assertIn("داخل حلقه", err.message)
+
+    def test_continue_at_top_level(self):
+        err = run_error("ادامه")
+        self.assertIn("داخل حلقه", err.message)
+
+    def test_break_in_function_outside_loop(self):
+        err = run_error("تابع نام()\n    بشکن\nنام()")
+        self.assertIn("داخل حلقه", err.message)
+
+
 if __name__ == "__main__":
     unittest.main()

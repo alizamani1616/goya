@@ -91,8 +91,13 @@ class Interpreter:
 
     def run(self, program):
         self.reset_clock()
-        for st in program.statements:
-            self.exec_stmt(st, self.global_env)
+        try:
+            for st in program.statements:
+                self.exec_stmt(st, self.global_env)
+        except BreakSignal:
+            raise GoyaRuntimeError("«بشکن» فقط داخل حلقه معنی داره")
+        except ContinueSignal:
+            raise GoyaRuntimeError("«ادامه» فقط داخل حلقه معنی داره")
 
     def evaluate(self, expr, env=None):
         return self.eval_expr(expr, env or self.global_env)
@@ -313,6 +318,14 @@ class Interpreter:
                 self._exec_block(func.body, call_env)
             except ReturnSignal as r:
                 return r.value
+            except BreakSignal:
+                raise GoyaRuntimeError(
+                    "«بشکن» داخل تابع، بیرون از حلقه‌ست", e.line
+                )
+            except ContinueSignal:
+                raise GoyaRuntimeError(
+                    "«ادامه» داخل تابع، بیرون از حلقه‌ست", e.line
+                )
             return None
         if isinstance(func, Builtin):
             try:
