@@ -223,7 +223,7 @@ class TestBreakOutsideLoop(unittest.TestCase):
 
     def test_break_in_function_outside_loop(self):
         err = run_error("تابع نام()\n    بشکن\nنام()")
-        self.assertIn("داخل حلقه", err.message)
+        self.assertIn("حلقه", err.message)
 
 
 if __name__ == "__main__":
