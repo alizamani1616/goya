@@ -23,6 +23,11 @@ class GoyaRuntimeError(GoyaError):
     kind = "خطای اجرا"
 
 
+class GoyaPropError(GoyaError):
+    """ویژگی ناشناخته روی کنترل/شیء GUI"""
+    kind = "خطای ویژگی"
+
+
 class IncompleteInput(GoyaSyntaxError):
     """ورودی هنوز تموم نشده — REPL از این استفاده می‌کنه تا چند سطری بخونه"""
 

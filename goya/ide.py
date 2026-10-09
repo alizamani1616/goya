@@ -154,6 +154,23 @@ class Handler(BaseHTTPRequestHandler):
                     self._send(200, f.read(), "image/webp")
             except OSError:
                 self._json({"error": "فایل پیدا نشد"}, 404)
+        elif self.path == "/studio":
+            try:
+                with open(os.path.join(_STATIC, "..", "studio_static", "studio.html"), "rb") as f:
+                    self._send(200, f.read(), "text/html; charset=utf-8")
+            except OSError:
+                self._json({"error": "صفحه پیدا نشد"}, 500)
+        elif self.path.startswith("/ide_static/"):
+            name = os.path.basename(self.path)
+            sub = "icons" if "/icons/" in self.path else ""
+            target = os.path.join(_STATIC, sub, name) if sub else os.path.join(_STATIC, name)
+            ext = ".png" if name.endswith(".png") else ".webp"
+            ctype = "image/webp" if ext == ".webp" else "image/png"
+            try:
+                with open(target, "rb") as f:
+                    self._send(200, f.read(), ctype)
+            except OSError:
+                self._json({"error": "فایل پیدا نشد"}, 404)
         elif self.path == "/api/examples":
             self._json({"examples": list_examples()})
         else:

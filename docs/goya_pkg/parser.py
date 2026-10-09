@@ -64,6 +64,14 @@ class Index:
 
 
 @dataclass
+class Attr:
+    """دسترسی به ویژگی: کادر۱.متن"""
+    obj: object
+    name: str
+    line: int
+
+
+@dataclass
 class ListLit:
     items: List[object]
     line: int
@@ -73,6 +81,15 @@ class ListLit:
 
 @dataclass
 class Assign:
+    name: str
+    expr: object
+    line: int
+
+
+@dataclass
+class AttrAssign:
+    """انتساب به ویژگی: کادر۱.متن = «سلام»"""
+    obj: object
     name: str
     expr: object
     line: int
@@ -259,11 +276,15 @@ class Parser:
         e = self.expression()
         if self.at_op("="):
             self.advance()
-            if not isinstance(e, Name):
-                self.error("سمت چپ «=» باید یه اسم باشه")
-            value = self.expression()
-            self._end_of_line()
-            return Assign(e.name, value, line)
+            if isinstance(e, Name):
+                value = self.expression()
+                self._end_of_line()
+                return Assign(e.name, value, line)
+            if isinstance(e, Attr):
+                value = self.expression()
+                self._end_of_line()
+                return AttrAssign(e.obj, e.name, value, line)
+            self.error("سمت چپ «=» باید یه اسم یا ویژگی باشه")
         self._end_of_line()
         return ExprStmt(e)
 
@@ -489,6 +510,15 @@ class Parser:
                     self.error("اینجا فقط فراخوانی تابع با اسم مستقیم ممکنه", tok)
                 args = self._args()
                 node = Call(node, args, tok.line)
+            elif self.at_op("."):
+                tok = self.advance()
+                nt = self.peek()
+                if nt.type != "NAME":
+                    self.error("بعد از نقطه باید اسم ویژگی بیاد")
+                if self.kw(nt) in RESERVED:
+                    self.error("«{}» اسم ویژگی مجاز نیست".format(nt.value))
+                self.advance()
+                node = Attr(node, nt.value, tok.line)
             elif self.at_op("["):
                 tok = self.advance()
                 idx = self.expression()

@@ -157,6 +157,9 @@ def start(project_path=None):
         background_color="#FFF3E4",
     )
     api.window = webview.windows[0]
+    if os.environ.get("GOYA_SMOKE"):
+        # تست دودی: پنجره ۳ ثانیه باز می‌مونه و خودش بسته می‌شه
+        threading.Timer(3.0, lambda: api.window.destroy()).start()
     webview.start(gui="edgechromium" if sys.platform == "win32" else None)
 
 

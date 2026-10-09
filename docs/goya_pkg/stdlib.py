@@ -162,6 +162,49 @@ def _bi_today(args):
     return to_persian_digits("{}/{:02d}/{:02d}".format(jy, jm, jd))
 
 
+def _gui_int(v, what):
+    """تبدیل محدود آرگومان مختصات/اندازه به عدد صحیح"""
+    from .errors import GoyaRuntimeError
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        raise GoyaRuntimeError("{} باید عدد صحیح باشه".format(what))
+    return int(v)
+
+
+def _bi_form(args):
+    from .gui import factory_form
+    title = display(args[0]) if args else "برنامه گویا"
+    w = _gui_int(args[1], "پهنای فرم") if len(args) > 1 else 420
+    h = _gui_int(args[2], "ارتفاع فرم") if len(args) > 2 else 320
+    return factory_form(title, w, h)
+
+
+def _bi_button(args):
+    from .gui import factory_button
+    if len(args) < 3:
+        raise GoyaRuntimeError("دکمه() سه ورودی می‌خواد: دکمه(\"متن\"، x، y)")
+    return factory_button(display(args[0]), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_label(args):
+    from .gui import factory_label
+    if len(args) < 3:
+        raise GoyaRuntimeError("برچسب() سه ورودی می‌خواد: برچسب(\"متن\"، x، y)")
+    return factory_label(display(args[0]), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_textbox(args):
+    from .gui import factory_textbox
+    if len(args) < 3:
+        raise GoyaRuntimeError("کادر() سه ورودی می‌خواد: کادر(\"راهنما\"، x، y)")
+    return factory_textbox(display(args[0]), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_message(args):
+    from .gui import show_message
+    show_message(" ".join(display(a) for a in args) if args else "")
+    return None
+
+
 def install_builtins(env, input_fn=None):
     """ریختن تابع‌های داخلی تو محیط سراسری — بنویس و بگیر اسم مستعارن
 
@@ -187,3 +230,8 @@ def install_builtins(env, input_fn=None):
     env.define("گرد", Builtin("گرد", _bi_round))
     env.define("تصادفی", Builtin("تصادفی", _bi_random))
     env.define("امروز", Builtin("امروز", _bi_today))
+    env.define("فرم", Builtin("فرم", _bi_form))
+    env.define("دکمه", Builtin("دکمه", _bi_button))
+    env.define("برچسب", Builtin("برچسب", _bi_label))
+    env.define("کادر", Builtin("کادر", _bi_textbox))
+    env.define("پیام", Builtin("پیام", _bi_message))
