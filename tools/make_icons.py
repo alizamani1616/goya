@@ -262,16 +262,23 @@ def i_heart():
 
 
 def i_moon():
+    """هلال نازک و تمیز (ماسک دو دایره)"""
     img, d = _transparent()
-    d.ellipse([18, 12, 82, 76], fill=GOLD)
-    d.ellipse([34, 4, 94, 64], fill=(0, 0, 0, 0))
-    # هلال: دایره‌ی طلایی منهای دایره‌ی بالا-راست (با ماسک)
     mask = Image.new("L", (S, S), 0)
     md = ImageDraw.Draw(mask)
-    md.ellipse([18, 12, 82, 76], fill=255)
-    md.ellipse([36, 2, 96, 62], fill=0)
-    solid = Image.new("RGBA", (S, S), GOLD)
+    md.ellipse([16, 10, 84, 88], fill=255)     # دایره‌ی کامل ماه
+    md.ellipse([48, -2, 112, 62], fill=0)      # برش مورب → هلال
+    solid = Image.new("RGBA", (S, S), (255, 200, 40, 255))
     img.paste(solid, (0, 0), mask)
+    return img
+
+
+def i_home():
+    """خانه‌ی ساده برای لینک صفحه‌ی اصلی — تو ۱۶ پیکسل هم واضحه"""
+    img, d = _transparent()
+    d.polygon([(48, 10), (86, 46), (10, 46)], fill=NAVY)          # شیروانی
+    d.rounded_rectangle([22, 44, 74, 86], radius=6, fill=NAVY)    # بدنه
+    d.rounded_rectangle([40, 58, 56, 86], radius=4, fill=(255, 200, 40, 255))  # در زرد
     return img
 
 
