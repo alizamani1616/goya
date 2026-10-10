@@ -201,6 +201,8 @@ main{position:relative;z-index:1;max-width:1540px;margin:0 auto;padding:0 18px 1
     <div class="panel" style="border-radius:16px 16px 0 0;border-bottom:0">
       <div style="display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);align-items:center">
         <span style="font-size:13px;color:var(--muted);font-weight:700">کد گویا — بخش فرم را دست نزن، طراح خودش به‌روز می‌کند</span>
+        <span class="spacer"></span>
+        <span id="evLabel" style="display:none;background:var(--tint-yellow);border:1.5px solid #E2C15C;color:#8A6D1F;border-radius:999px;padding:3px 12px;font-weight:800;font-size:12px"></span>
       </div>
       <div class="editor-wrap" style="border-radius:0">
         <div class="gutter" id="gutter"></div>
@@ -349,7 +351,14 @@ function renderCanvas(){
   $("formTitle").textContent = state.form.title;
   canvas.querySelectorAll(".ctrl").forEach(el => {
     el.onmousedown = e => startDrag(e, el.dataset.id);
-    el.ondblclick = () => { select(el.dataset.id); ensureStub(el.dataset.id); showTab("code"); };
+    el.ondblclick = e => {
+      e.stopPropagation();
+      const c = state.controls.find(x => x.id === el.dataset.id);
+      if (!c) return;
+      select(c.id);
+      const t = TYPES[c.type];
+      if (t.def) jumpToEvent(c, t.def); else showTab("code");
+    };
   });
 }
 function select(id){
@@ -382,7 +391,7 @@ function renderProps(){
     if (el && key !== "name") el.oninput = () => setProp(c, key, el.value);
   });
   document.querySelectorAll(".evchip").forEach(ch => {
-    ch.onclick = () => { ensureStub(c, ch.dataset.ev); showTab("code"); };
+    ch.onclick = () => jumpToEvent(c, ch.dataset.ev);
   });
   const del = $("delBtn");
   if (del) del.onclick = deleteSelected;
@@ -530,10 +539,25 @@ function syncCodeFromState(){ ta.value = codeText; updateCode(); }
 
 function ensureStub(c, ev){
   const fnName = c.name + "_" + ev;
-  if (codeText.includes("تابع " + fnName)) return;
-  if (codeText.trim()) codeText += "\n\n";
-  codeText += "تابع " + fnName + "()\n    \n";
-  $("codeTa").value = codeText; updateCode();
+  const marker = "تابع " + fnName + "()";
+  let idx = codeText.indexOf(marker);
+  if (idx < 0){
+    if (codeText.trim()) codeText += "\n\n";
+    idx = codeText.length;
+    codeText += marker + "\n    \n";
+    $("codeTa").value = codeText; updateCode(); saveSoon();
+  }
+  const body = codeText.indexOf("\n    ", idx);
+  return body >= 0 ? body + 5 : codeText.length;
+}
+function jumpToEvent(c, ev){
+  const pos = ensureStub(c, ev);
+  showTab("code");
+  $("codeTa").focus();
+  $("codeTa").setSelectionRange(pos, pos);
+  const lbl = $("evLabel");
+  lbl.style.display = "inline-block";
+  lbl.textContent = "در حال نوشتن رویداد: " + c.name + "_" + ev;
 }
 
 /* ───────── ذخیره / باز / جدید / اجرا ───────── */
