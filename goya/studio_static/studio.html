@@ -361,17 +361,6 @@ function renderCanvas(){
   canvas.style.height = (state.form.h - 36) + "px";
   $("formWindow").style.width = state.form.w + "px";
   $("formTitle").textContent = state.form.title;
-  canvas.querySelectorAll(".ctrl").forEach(el => {
-    el.onmousedown = e => startDrag(e, el.dataset.id);
-    el.ondblclick = e => {
-      e.stopPropagation();
-      const c = state.controls.find(x => x.id === el.dataset.id);
-      if (!c) return;
-      select(c.id);
-      const t = TYPES[c.type];
-      if (t.def) jumpToEvent(c, t.def); else showTab("code");
-    };
-  });
   renderExplorer();
 }
 function select(id){
@@ -527,9 +516,23 @@ document.addEventListener("mousemove", e => {
   renderCanvas(); renderProps();
 });
 document.addEventListener("mouseup", () => { if (drag){ drag = null; saveSoon(); } });
-canvas.onmousedown = e => {
-  if (e.target === canvas){ state.selected = null; renderCanvas(); renderProps(); }
-};
+canvas.addEventListener("mousedown", e => {
+  const ctrlEl = e.target.closest(".ctrl");
+  if (ctrlEl){
+    startDrag(e, ctrlEl.dataset.id);
+  } else {
+    state.selected = null; renderCanvas(); renderProps();
+  }
+});
+canvas.addEventListener("dblclick", e => {
+  const ctrlEl = e.target.closest(".ctrl");
+  if (!ctrlEl) return;
+  const c = state.controls.find(x => x.id === ctrlEl.dataset.id);
+  if (!c) return;
+  select(c.id);
+  const t = TYPES[c.type];
+  if (t.def) jumpToEvent(c, t.def); else showTab("code");
+});
 
 /* ───────── قالب‌های آماده کد ───────── */
 const CARET = "\u0001";
