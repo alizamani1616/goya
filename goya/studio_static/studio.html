@@ -83,6 +83,9 @@ header{display:flex;align-items:center;gap:10px;padding:8px 16px;flex-wrap:wrap;
 
 .designer-view{flex:1;overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding:20px;background-image:radial-gradient(circle,rgba(30,42,74,.09) 1.4px,transparent 1.6px);background-size:20px 20px}
 .form-window{background:#FDFEFF;border-radius:10px;box-shadow:0 14px 40px rgba(60,40,120,.22);position:relative;overflow:hidden;border:1px solid #D9DFEA;flex-shrink:0}
+.resize-handle{position:absolute;left:0;bottom:0;width:18px;height:18px;cursor:nesw-resize;z-index:100;display:flex;align-items:flex-end;justify-content:flex-start;padding:3px}
+.resize-handle::before{content:"";width:10px;height:10px;border-left:3px solid var(--accent2);border-bottom:3px solid var(--accent2);border-radius:0 0 0 6px;opacity:.6}
+.resize-handle:hover::before{opacity:1}
 [data-theme="dark"] .form-window{background:#0F1830}
 .form-title{height:36px;display:flex;align-items:center;padding:0 13px;font-weight:700;font-size:12.5px;color:#F8FAFC;background:linear-gradient(135deg,#1E2A4A,#33436B)}
 .winbtns{position:absolute;left:11px;top:0;height:36px;display:flex;align-items:center;gap:6px}
@@ -195,6 +198,7 @@ header{display:flex;align-items:center;gap:10px;padding:8px 16px;flex-wrap:wrap;
         <div class="form-window" id="formWindow">
           <div class="form-title"><span class="winbtns"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i></span><span id="formTitle">برنامه من</span></div>
           <div id="canvas" style="position:relative;width:340px;height:202px"></div>
+          <div class="resize-handle" id="resizeHandle" title="بکش تا اندازه عوض شه"></div>
         </div>
       </div>
     </div>
@@ -533,6 +537,28 @@ canvas.addEventListener("dblclick", e => {
   const t = TYPES[c.type];
   if (t.def) jumpToEvent(c, t.def); else showTab("code");
 });
+
+/* ───── تغییر اندازه‌ی فرم با درگ ───── */
+const resizeHandle = $("resizeHandle");
+let resizing = false;
+resizeHandle.addEventListener("mousedown", e => {
+  e.stopPropagation();
+  resizing = true;
+  e.preventDefault();
+});
+document.addEventListener("mousemove", e => {
+  if (!resizing) return;
+  const wrap = $("formWindow").getBoundingClientRect();
+  const newW = Math.max(200, Math.round(e.clientX - wrap.left + 10));
+  const newH = Math.max(150, Math.round(e.clientY - wrap.top + 10));
+  state.form.w = newW; state.form.h = newH;
+  $("formWindow").style.width = newW + "px";
+  canvas.style.width = newW + "px";
+  canvas.style.height = (newH - 34) + "px";
+  $("fW").value = newW; $("fH").value = newH;
+  renderCanvas(); saveSoon();
+});
+document.addEventListener("mouseup", () => { resizing = false; });
 
 /* ───────── قالب‌های آماده کد ───────── */
 const CARET = "\u0001";
