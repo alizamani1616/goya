@@ -205,6 +205,85 @@ def _bi_message(args):
     return None
 
 
+def _gui_items(v, what):
+    """تبدیل لیست گویا به فهرست متن"""
+    from .errors import GoyaRuntimeError
+    if not isinstance(v, list):
+        raise GoyaRuntimeError("{} باید یه لیست باشه".format(what))
+    return [display(i) for i in v]
+
+
+def _bi_multiline(args):
+    from .gui import factory_multiline
+    if len(args) < 3:
+        raise GoyaRuntimeError("چندخطی() سه ورودی می\u200cخواد: چندخطی(\"متن\"، x، y)")
+    return factory_multiline(display(args[0]), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_checkbox(args):
+    from .gui import factory_checkbox
+    if len(args) < 3:
+        raise GoyaRuntimeError("چک_باکس() سه ورودی می\u200cخواد: چک_باکس(\"متن\"، x، y)")
+    return factory_checkbox(display(args[0]), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_radio(args):
+    from .gui import factory_radio
+    if len(args) < 3:
+        raise GoyaRuntimeError("رادیو() سه ورودی می\u200cخواد: رادیو(\"متن\"، x، y)")
+    return factory_radio(display(args[0]), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_switch(args):
+    from .gui import factory_switch
+    if len(args) < 3:
+        raise GoyaRuntimeError("کلید() سه ورودی می\u200cخواد: کلید(\"متن\"، x، y)")
+    return factory_switch(display(args[0]), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_combo(args):
+    from .gui import factory_combo
+    if len(args) < 3:
+        raise GoyaRuntimeError("کامبو() سه ورودی می\u200cخواد: کامبو(آیتم‌ها، x، y)")
+    return factory_combo(_gui_items(args[0], "آیتم‌های کامبو"), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_list(args):
+    from .gui import factory_list
+    if len(args) < 3:
+        raise GoyaRuntimeError("لیست() سه ورودی می\u200cخواد: لیست(آیتم‌ها، x، y)")
+    return factory_list(_gui_items(args[0], "آیتم‌های لیست"), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_slider(args):
+    from .gui import factory_slider
+    if len(args) < 4:
+        raise GoyaRuntimeError("لغزنده() چهار ورودی می\u200cخواد: لغزنده(کمینه، بیشینه، x، y)")
+    return factory_slider(_gui_int(args[0], "کمینه"), _gui_int(args[1], "بیشینه"),
+                          _gui_int(args[2], "x"), _gui_int(args[3], "y"))
+
+
+def _bi_progress(args):
+    from .gui import factory_progress
+    if len(args) < 2:
+        raise GoyaRuntimeError("پیشرفت() دو ورودی می\u200cخواد: پیشرفت(x، y)")
+    return factory_progress(_gui_int(args[0], "x"), _gui_int(args[1], "y"))
+
+
+def _bi_image(args):
+    from .gui import factory_image
+    if len(args) < 3:
+        raise GoyaRuntimeError("تصویر() سه ورودی می\u200cخواد: تصویر(\"فایل\"، x، y)")
+    return factory_image(args[0], _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_timer(args):
+    from .gui import factory_timer
+    if len(args) < 1:
+        raise GoyaRuntimeError("تایمر() فاصله می\u200cخواد: تایمر(۱۰۰۰)")
+    return factory_timer(_gui_int(args[0], "فاصله"))
+
+
 def install_builtins(env, input_fn=None):
     """ریختن تابع‌های داخلی تو محیط سراسری — بنویس و بگیر اسم مستعارن
 
@@ -235,3 +314,13 @@ def install_builtins(env, input_fn=None):
     env.define("برچسب", Builtin("برچسب", _bi_label))
     env.define("کادر", Builtin("کادر", _bi_textbox))
     env.define("پیام", Builtin("پیام", _bi_message))
+    env.define("چندخطی", Builtin("چندخطی", _bi_multiline))
+    env.define("چک_باکس", Builtin("چک_باکس", _bi_checkbox))
+    env.define("رادیو", Builtin("رادیو", _bi_radio))
+    env.define("کلید", Builtin("کلید", _bi_switch))
+    env.define("کامبو", Builtin("کامبو", _bi_combo))
+    env.define("لیست", Builtin("لیست", _bi_list))
+    env.define("لغزنده", Builtin("لغزنده", _bi_slider))
+    env.define("پیشرفت", Builtin("پیشرفت", _bi_progress))
+    env.define("تصویر", Builtin("تصویر", _bi_image))
+    env.define("تایمر", Builtin("تایمر", _bi_timer))
