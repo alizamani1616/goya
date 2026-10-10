@@ -220,7 +220,7 @@ class GoyaButton(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(text=_text(text), x=x, y=y)
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkButton(form.window, text=_text(text), width=120, height=34)
+            self._widget = ctk.CTkButton(form.window, text=_text(text), width=140, height=34)
         else:
             self._widget = tk.Button(form.window, text=_text(text), width=12)
         self._widget.place(x=x, y=y)

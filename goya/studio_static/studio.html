@@ -98,33 +98,33 @@ header{display:flex;align-items:center;gap:10px;padding:8px 16px;flex-wrap:wrap;
 #canvas{position:relative;background:#FDFEFF;direction:ltr}
 #canvas .ctrl{direction:ltr;text-align:right}
 #canvas .ctrl span,#canvas .ctrl div{direction:rtl}
-.ctrl{position:absolute;cursor:move;user-select:none;font-family:Vazirmatn,Tahoma;font-size:12.5px}
-.ctrl.btn-c{background:linear-gradient(135deg,#7048E8,#9775FA);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 3px 9px rgba(112,72,232,.30)}
-.ctrl.label-c{color:#1E2A4A;font-weight:700;display:flex;align-items:center}
+.ctrl{position:absolute;cursor:move;user-select:none;font-family:"Segoe UI",Vazirmatn,Tahoma;font-size:13px;color:#1E2A4A}
+.ctrl.btn-c{background:#7048E8;color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+.ctrl.label-c{color:#1E2A4A;font-weight:400;display:flex;align-items:center}
 [data-theme="dark"] .ctrl.label-c{color:#E2E8F0}
-.ctrl.entry-c{background:#fff;border:1.5px solid #C7CDD8;border-radius:7px;color:#1E2A4A;display:flex;align-items:center;padding:0 7px}
+.ctrl.entry-c{background:#fff;border:1px solid #9EA5B1;border-radius:5px;color:#1E2A4A;display:flex;align-items:center;padding:0 6px;font-weight:400}
 [data-theme="dark"] .ctrl.entry-c{background:#18213A;color:#E2E8F0;border-color:#39465C}
-.ctrl.multi-c{background:#fff;border:1.5px solid #C7CDD8;border-radius:7px;color:#1E2A4A;padding:5px 7px;white-space:pre-wrap;overflow:hidden;line-height:1.7}
+.ctrl.multi-c{background:#fff;border:1px solid #9EA5B1;border-radius:5px;color:#1E2A4A;padding:5px 6px;white-space:pre-wrap;overflow:hidden;line-height:1.65;font-weight:400}
 [data-theme="dark"] .ctrl.multi-c{background:#18213A;color:#E2E8F0;border-color:#39465C}
-.ctrl.check-c,.ctrl.radio-c,.ctrl.switch-c{color:#1E2A4A;display:flex;align-items:center;gap:6px;font-weight:600}
+.ctrl.check-c,.ctrl.radio-c,.ctrl.switch-c{color:#1E2A4A;display:flex;align-items:center;gap:5px;font-weight:400}
 [data-theme="dark"] .ctrl.check-c,[data-theme="dark"] .ctrl.radio-c,[data-theme="dark"] .ctrl.switch-c{color:#E2E8F0}
-.ctrl .box{width:14px;height:14px;border:2px solid var(--purple);border-radius:4px;flex-shrink:0}
-.ctrl .circ{width:14px;height:14px;border:2px solid var(--purple);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.ctrl .circ i{width:6px;height:6px;background:var(--purple);border-radius:50%}
-.ctrl .sw{width:30px;height:16px;background:#C7CDD8;border-radius:999px;position:relative;flex-shrink:0}
-.ctrl .sw::after{content:"";position:absolute;right:2px;top:2px;width:12px;height:12px;background:#fff;border-radius:50%}
-.ctrl.combo-c{background:#fff;border:1.5px solid #C7CDD8;border-radius:7px;color:#1E2A4A;display:flex;align-items:center;padding:0 7px;justify-content:space-between}
+.ctrl .box{width:15px;height:15px;border:2px solid #7048E8;border-radius:3px;flex-shrink:0}
+.ctrl .circ{width:15px;height:15px;border:2px solid #7048E8;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ctrl .circ i{width:6px;height:6px;background:#7048E8;border-radius:50%}
+.ctrl .sw{width:34px;height:18px;background:#9EA5B1;border-radius:999px;position:relative;flex-shrink:0}
+.ctrl .sw::after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.ctrl.combo-c{background:#fff;border:1px solid #9EA5B1;border-radius:5px;color:#1E2A4A;display:flex;align-items:center;padding:0 6px;justify-content:space-between;font-weight:400}
 [data-theme="dark"] .ctrl.combo-c{background:#18213A;color:#E2E8F0;border-color:#39465C}
 .ctrl.combo-c::after{content:"▾";color:var(--muted)}
-.ctrl.list-c{background:#fff;border:1.5px solid #C7CDD8;border-radius:7px;color:#1E2A4A;overflow:hidden}
+.ctrl.list-c{background:#fff;border:1px solid #9EA5B1;border-radius:5px;color:#1E2A4A;overflow:hidden;font-weight:400}
 [data-theme="dark"] .ctrl.list-c{background:#18213A;color:#E2E8F0;border-color:#39465C}
-.ctrl.list-c div{padding:2px 7px;border-bottom:1px solid var(--line);font-size:11.5px}
-.ctrl.slider-c{display:flex;align-items:center;color:var(--muted);font-size:10.5px}
-.ctrl.slider-c .track{flex:1;height:5px;background:#DCE4EE;border-radius:4px;position:relative;margin:0 7px}
-.ctrl.slider-c .track::after{content:"";position:absolute;top:-5px;right:30%;width:14px;height:14px;background:var(--purple);border-radius:50%}
-.ctrl.prog-c{background:#E5E9F0;border-radius:5px;overflow:hidden}
-.ctrl.prog-c .fill{height:100%;background:var(--purple);width:35%}
-.ctrl.img-c{border:1.5px dashed #A9B4C6;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-size:11px;background:var(--tint-blue)}
+.ctrl.list-c div{padding:3px 7px;border-bottom:1px solid #E5E7EB;font-size:12px}
+.ctrl.slider-c{display:flex;align-items:center;color:#6B7280;font-size:10px}
+.ctrl.slider-c .track{flex:1;height:4px;background:#D1D5DB;border-radius:3px;position:relative;margin:0 6px}
+.ctrl.slider-c .track::after{content:"";position:absolute;top:-5px;right:30%;width:14px;height:14px;background:#7048E8;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.ctrl.prog-c{background:#E5E7EB;border-radius:4px;overflow:hidden}
+.ctrl.prog-c .fill{height:100%;background:#7048E8;width:35%}
+.ctrl.img-c{border:1.5px dashed #9CA3AF;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-size:11px;background:var(--tint-blue)}
 .ctrl.timer-c{background:var(--tint-yellow);border:1.5px dashed #E2C15C;border-radius:8px;display:flex;align-items:center;gap:5px;padding:3px 9px;font-weight:800;font-size:11.5px;color:#8A6D1F}
 .ctrl.timer-c img{width:14px;height:14px}
 .ctrl.sel{outline:2.5px solid #2DD4BF;outline-offset:1px}
@@ -262,7 +262,7 @@ const strip = s => s.split(ZWNJ).join("");
 
 /* ───────── انواع کنترل ───────── */
 const TYPES = {
-  "دکمه":    {w:120, h:34,  cls:"btn-c",    factory:"دکمه",   icon:"⬛", ev:["کلیک","دبل‌کلیک"], def:"کلیک",
+  "دکمه":    {w:140, h:34,  cls:"btn-c",    factory:"دکمه",   icon:"⬛", ev:["کلیک","دبل‌کلیک"], def:"کلیک",
               props:[["name","نام کنترل"],["text","متن"],["x","X — از راست"],["y","Y — از بالا"]]},
   "برچسب":   {w:140, h:26,  cls:"label-c",  factory:"برچسب",  icon:"🏷", ev:["کلیک"], def:"کلیک",
               props:[["name","نام کنترل"],["text","متن"],["x","X"],["y","Y"]]},
