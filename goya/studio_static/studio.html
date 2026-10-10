@@ -95,8 +95,9 @@ header{display:flex;align-items:center;gap:10px;padding:8px 16px;flex-wrap:wrap;
 .form-title{height:36px;display:flex;align-items:center;padding:0 13px;font-weight:700;font-size:12.5px;color:#F8FAFC;background:linear-gradient(135deg,#1E2A4A,#33436B)}
 .winbtns{position:absolute;left:11px;top:0;height:36px;display:flex;align-items:center;gap:6px}
 .winbtns i{width:11px;height:11px;border-radius:50%;display:inline-block}
-#canvas{position:relative;background:#FDFEFF}
-[data-theme="dark"] #canvas{background:#0F1830}
+#canvas{position:relative;background:#FDFEFF;direction:ltr}
+#canvas .ctrl{direction:ltr;text-align:right}
+#canvas .ctrl span,#canvas .ctrl div{direction:rtl}
 .ctrl{position:absolute;cursor:move;user-select:none;font-family:Vazirmatn,Tahoma;font-size:12.5px}
 .ctrl.btn-c{background:linear-gradient(135deg,#7048E8,#9775FA);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 3px 9px rgba(112,72,232,.30)}
 .ctrl.label-c{color:#1E2A4A;font-weight:700;display:flex;align-items:center}
@@ -365,7 +366,7 @@ function ctrlHTML(c){
   else if (c.type==="تصویر") inner = '<img src="../ide_static/icons/pin.webp" style="width:18px;height:18px;opacity:.5" alt="">' + esc(c.file || "مسیر تصویر");
   else if (c.type==="تایمر") inner = '<img src="../ide_static/icons/clock.webp" style="width:14px;height:14px" alt="">' + esc(c.name) + " — هر " + faNum(c.interval||1000) + "ms";
   return '<div class="ctrl ' + t.cls + (state.selected===c.id ? " sel" : "") +
-    '" style="right:' + c.x + 'px;top:' + c.y + 'px;width:' + t.w + 'px;height:' + t.h + 'px"' +
+    '" style="left:' + c.x + 'px;top:' + c.y + 'px;width:' + t.w + 'px;height:' + t.h + 'px"' +
     ' data-id="' + c.id + '">' + inner + '</div>';
 }
 function renderCanvas(){
