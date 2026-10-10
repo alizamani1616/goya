@@ -57,6 +57,11 @@ header{display:flex;align-items:center;gap:10px;padding:8px 16px;flex-wrap:wrap;
 .tree .empty{color:var(--muted);font-size:11.5px;padding:4px 10px}
 
 .tools{display:flex;flex-direction:column;gap:3px;padding:8px}
+.filelist{padding:4px 6px}
+.fitem{display:flex;align-items:center;gap:7px;padding:4px 9px;border-radius:6px;cursor:pointer;color:var(--text);font-size:12px;transition:.1s}
+.fitem:hover{background:rgba(151,117,250,.12);color:var(--bright)}
+.fitem img{width:14px;height:14px;opacity:.6}
+.fitem .fsize{margin-right:auto;color:var(--muted);font-size:10px}
 .tool{display:flex;align-items:center;gap:9px;border:1.5px solid transparent;border-radius:10px;padding:5px 9px;cursor:grab;transition:.12s;font-weight:700;font-size:13px}
 .tool:hover{border-color:var(--purple2);background:var(--tint-violet)}
 .tool small{display:block;color:var(--muted);font-weight:500;font-size:10px}
@@ -178,6 +183,10 @@ header{display:flex;align-items:center;gap:10px;padding:8px 16px;flex-wrap:wrap;
 
 <div class="workbench">
   <div class="col">
+    <div class="panel" style="flex-shrink:0;max-height:180px">
+      <h3>📁 فایل‌های من</h3>
+      <div class="body" id="fileList" style="overflow:auto"></div>
+    </div>
     <div class="panel" style="flex:1">
       <h3>🧭 کاوشگر</h3>
       <div class="body tree" id="explorer"></div>
@@ -839,6 +848,35 @@ $("themeBtn").onclick = () => {
   try{ localStorage.setItem("goya-studio-theme", dark ? "" : "dark"); }catch(e){}
 };
 
+/* ───────── فایل‌های من ───────── */
+function loadFileList(){
+  try{
+    window.pywebview.api.list_recent_files().then(files => {
+      const el = $("fileList");
+      if (!files || !files.length){
+        el.innerHTML = '<div style="padding:4px 10px;color:#858585;font-size:11px">هنوز فایلی ذخیره نشده</div>';
+        return;
+      }
+      let h = "";
+      files.forEach(f => {
+        h += '<div class="fitem" data-path="' + esc(f.path) + '"><img src="../ide_static/icons/file.webp" alt="">' + esc(f.name.replace(".goya","")) + '<span style="margin-right:auto;color:#858585;font-size:10px">' + faNum(String(Math.round(f.size/1024))) + ' KB</span></div>';
+      });
+      el.innerHTML = h;
+      el.querySelectorAll(".fitem").forEach(item => {
+        item.onclick = async () => {
+          const r = await window.pywebview.api.read_file(item.dataset.path);
+          if (r && r.ok){
+            parseProjectText(r.content);
+            $("projName").value = r.path.split(/[\\/]/).pop();
+            showTab("designer");
+            setStatus("باز شد: " + r.path);
+          }
+        };
+      });
+    });
+  }catch(e){}
+}
+
 /* ───────── شروع ───────── */
 (async function init(){
   try{
@@ -884,6 +922,7 @@ $("themeBtn").onclick = () => {
     setStatus("بازیابی شد");
   }
   renderCanvas(); renderProps(); updateCode(); renderExplorer();
+  loadFileList();
 })();
 </script>
 </body>

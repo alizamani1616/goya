@@ -102,6 +102,32 @@ class StudioApi:
                 return {"ok": False, "err": str(e)}
         return {"ok": True, "content": "", "path": ""}
 
+    def read_file(self, path):
+        """خواندن یک فایل .goya مشخص"""
+        try:
+            with open(path, encoding="utf-8") as f:
+                return {"ok": True, "content": f.read(), "path": path}
+        except (OSError, UnicodeDecodeError) as e:
+            return {"ok": False, "err": str(e)}
+
+    def list_recent_files(self):
+        """فهرست فایل‌های .goya در پوشه‌ی پروژه‌های کاربر"""
+        docs = os.path.join(os.path.expanduser("~"), "Documents", "Goya")
+        if not os.path.isdir(docs):
+            docs = os.path.expanduser("~")
+        files = []
+        try:
+            for name in sorted(os.listdir(docs)):
+                if name.endswith(".goya"):
+                    path = os.path.join(docs, name)
+                    size = os.path.getsize(path)
+                    mtime = os.path.getmtime(path)
+                    files.append({"name": name, "path": path, "size": size, "mtime": mtime})
+        except OSError:
+            pass
+        files.sort(key=lambda x: x["mtime"], reverse=True)
+        return files[:20]
+
     def save_project(self, content):
         result = self.window.create_file_dialog(
             webview.SAVE_DIALOG,
