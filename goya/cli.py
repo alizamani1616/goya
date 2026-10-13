@@ -62,6 +62,7 @@ def main(argv=None):
     sub.add_parser("ide", help="محیط گرافیکی گویا (مرورگر)")
     studio_p = sub.add_parser("studio", help="گویا استودیو — طراحی ویژوال نرم‌افزار")
     studio_p.add_argument("file", nargs="?", help="پروژه .goya برای باز کردن (اختیاری)")
+    studio_p.add_argument("--inst", help=argparse.SUPPRESS)  # کلید نمونه برای چندپنجره‌ای
 
     args = parser.parse_args(argv)
 
@@ -77,7 +78,7 @@ def main(argv=None):
         sys.exit(0)
     if args.cmd == "studio":
         from .studio import start
-        start(args.file)
+        start(args.file, getattr(args, "inst", None))
         sys.exit(0)
     parser.print_help()
     sys.exit(0)

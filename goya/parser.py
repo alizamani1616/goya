@@ -300,17 +300,26 @@ class Parser:
     def _allow_colon(self):
         self.eat_op(":")
 
-    def _block(self, header_line):
+    def _block(self, header_line, allow_empty=False):
         t = self.peek()
         if t.type == "EOF":
+            if allow_empty:
+                return []
             raise IncompleteInput("بدنه‌ی بلوک ناتمام مونده", header_line)
         if t.type != "NEWLINE":
             self.error("بعد از این سطر باید سطر تورفته (بدنه بلوک) بیاد")
         self.advance()
         t = self.peek()
         if t.type == "EOF":
+            if allow_empty:
+                return []
             raise IncompleteInput("بدنه‌ی بلوک ناتمام مونده", header_line)
         if t.type != "INDENT":
+            # گویا استودیو برای رویدادها استاب خالی می‌سازد (تابع بدون بدنه).
+            # بدنه‌ی خالی فقط برای تابع و فقط وقتی مجاز است که مستقیم تابع دیگری بیاید؛
+            # در غیر این صورت احتمالاً تورفتگی فراموش شده و خطا حفظ می‌شود.
+            if allow_empty and t.type == "NAME" and t.value == "تابع":
+                return []
             self.error("بدنه‌ی بلوک باید تورفته باشه")
         self.advance()
         stmts = []
@@ -321,7 +330,7 @@ class Parser:
         if self.peek().type == "EOF":
             raise IncompleteInput("بلوک بسته نشده — تورفتگی کمتر کن یا سطر بده", header_line)
         self.advance()  # DEDENT
-        if not stmts:
+        if not stmts and not allow_empty:
             self.error("بدنه‌ی بلوک خالیه — حداقل یه سطر لازمه", self.toks[max(0, self.i - 1)])
         return stmts
 
@@ -400,7 +409,7 @@ class Parser:
         if not self.eat_op(")"):
             self.error("پرانتز تابع بسته نشده")
         self._allow_colon()
-        body = self._block(tok.line)
+        body = self._block(tok.line, allow_empty=True)
         return FuncDef(name, params, body, tok.line)
 
     def return_statement(self):

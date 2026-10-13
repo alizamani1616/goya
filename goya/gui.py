@@ -7,6 +7,39 @@ GOYA_HEADLESS=1 → بک‌اند ساختگی برای تست‌های بدون
 """
 
 import os
+import sys
+
+def _register_goya_font():
+    """وزیرمتن را از پوشه‌ی fonts خود پکیج، خصوصی برای همین پروسه ثبت می‌کند
+
+    FR_PRIVATE یعنی فونت بدون نصب‌شدن در ویندوز، فقط داخل همین برنامه در
+    دسترس است — خروجی exe روی هر سیستمی فارسیِ یکدست نشان می‌دهد.
+    در لینوکس/مک اگر فونت نصب باشد استفاده می‌شود، وگرنه tk بی‌سروصدا برمی‌گردد.
+    """
+    if os.name != "nt":
+        return
+    import ctypes
+
+    base = getattr(sys, "_MEIPASS", None)
+    candidates = []
+    if base:
+        candidates.append(os.path.join(base, "goya", "fonts"))
+        candidates.append(os.path.join(base, "fonts"))
+    candidates.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts"))
+    FR_PRIVATE = 0x10
+    for d in candidates:
+        if not os.path.isdir(d):
+            continue
+        loaded = 0
+        for fn in sorted(os.listdir(d)):
+            if fn.lower().endswith(".ttf"):
+                if ctypes.windll.gdi32.AddFontResourceExW(
+                    os.path.join(d, fn), FR_PRIVATE, 0
+                ):
+                    loaded += 1
+        if loaded:
+            return
+
 
 try:
     import customtkinter as ctk
@@ -20,8 +53,31 @@ if os.environ.get("GOYA_HEADLESS"):
 
 import tkinter as tk
 from tkinter import messagebox as _messagebox
+from tkinter import ttk as _ttk
 
-from .errors import GoyaPropError, GoyaRuntimeError
+from .errors import GoyaError, GoyaPropError, GoyaRuntimeError
+
+if BACKEND == "customtkinter":
+    # قرارداد WYSIWYG با گویا استودیو: خروجی همیشه تم روشن با مقیاس ۱۰۰٪ است
+    # تا پیش‌نمایش طراح پیکسل‌به‌پیکسل با پنجره‌ی واقعی یکی باشد.
+    ctk.set_appearance_mode("light")
+    ctk.ScalingTracker.deactivate_automatic_dpi_awareness = True
+
+_register_goya_font()
+
+# ─── مشخصات ظاهری ثابت — قرارداد یک‌به‌یک با پیش‌نمایش گویا استودیو ───
+FONT = "Vazirmatn"
+C_WINDOW = "#EBEBEB"        # پس‌زمینه‌ی فرم
+C_ACCENT = "#3B8ED0"        # رنگ اصلی (دکمه، چک‌باکس، لغزنده، پیشرفت)
+C_ACCENT_HOVER = "#36719F"
+C_TEXT = "#1A1A1A"          # متن اصلی
+C_TEXT_ON_ACCENT = "#DCE4EE"
+C_FIELD = "#F9F9FA"         # پس‌زمینه‌ی کادر، چندخطی، کامبو
+C_BORDER = "#979DA2"        # حاشیه‌ی کادر و کامبو
+C_TRACK = "#939BA2"         # شیار لغزنده/پیشرفت/کلید
+C_KNOB = "#5C5C5C"          # دستگیره‌ی کلید در حالت خاموش
+C_TOGGLE_BORDER = "#3E454A"  # حاشیه‌ی چک‌باکس و رادیو
+C_PLACEHOLDER = "#858585"
 
 # ─── وضعیت سراسری GUI ───
 
@@ -188,6 +244,14 @@ class GoyaForm:
         self.window.title(title)
         self.window.geometry("{}x{}".format(width, height))
         self.window.resizable(True, True)
+        # فونت پیش‌فرض همه‌ی ویجت‌ها — هر کنترلی که فونت صریح نگیرد (مثل لیست
+        # بازشوی کامبو) همین را می‌گیرد، نه فونت پیش‌فرض سیستم را
+        if BACKEND != "dummy":
+            self.window.option_add("*Font", (FONT, -13))
+        if BACKEND == "customtkinter":
+            self.window.configure(fg_color=C_WINDOW)
+        elif BACKEND == "tkinter":
+            self.window.configure(bg=C_WINDOW)
 
     def goya_get(self, name):
         if name == "عنوان":
@@ -220,10 +284,19 @@ class GoyaButton(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(text=_text(text), x=x, y=y)
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkButton(form.window, text=_text(text), width=140, height=34)
+            self._widget = ctk.CTkButton(
+                form.window, text=_text(text), width=140, height=34,
+                corner_radius=6, fg_color=C_ACCENT, hover_color=C_ACCENT_HOVER,
+                text_color=C_TEXT_ON_ACCENT, font=(FONT, 13))
         else:
-            self._widget = tk.Button(form.window, text=_text(text), width=12)
-        self._widget.place(x=x, y=y)
+            self._widget = tk.Button(
+                form.window, text=_text(text), bg=C_ACCENT, fg="white",
+                activebackground=C_ACCENT_HOVER, activeforeground="white",
+                relief="flat", bd=0, font=(FONT, -13))
+        if BACKEND == "tkinter":
+            self._widget.place(x=x, y=y, width=140, height=34)
+        else:
+            self._widget.place(x=x, y=y)
 
     def _get_prop(self, prop):
         return self._widget.cget("text")
@@ -259,9 +332,11 @@ class GoyaLabel(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(text=_text(text), x=x, y=y)
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkLabel(form.window, text=_text(text), font=("Tahoma", 14))
+            self._widget = ctk.CTkLabel(form.window, text=_text(text),
+                                        text_color=C_TEXT, font=(FONT, 14))
         else:
-            self._widget = tk.Label(form.window, text=_text(text), font=("Tahoma", 11))
+            self._widget = tk.Label(form.window, text=_text(text),
+                                    bg=C_WINDOW, fg=C_TEXT, font=(FONT, -14))
         self._widget.place(x=x, y=y)
         if BACKEND != "dummy":
             self._widget.bind("<Button-1>", lambda e: self.fire())
@@ -284,11 +359,20 @@ class GoyaTextBox(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(placeholder=_text(placeholder), x=x, y=y, _value=_text(placeholder))
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkEntry(form.window, placeholder_text=_text(placeholder), width=160, height=32)
+            self._widget = ctk.CTkEntry(
+                form.window, placeholder_text=_text(placeholder), width=160, height=32,
+                corner_radius=6, border_width=2, fg_color=C_FIELD, border_color=C_BORDER,
+                text_color=C_TEXT, placeholder_text_color=C_PLACEHOLDER, font=(FONT, 13))
         else:
-            self._widget = tk.Entry(form.window, width=22)
+            self._widget = tk.Entry(
+                form.window, bg=C_FIELD, fg=C_TEXT, relief="flat",
+                highlightthickness=2, highlightbackground=C_BORDER,
+                highlightcolor=C_BORDER, insertbackground=C_TEXT, font=(FONT, -13))
             self._widget.insert(0, _text(placeholder))
-        self._widget.place(x=x, y=y)
+        if BACKEND == "tkinter":
+            self._widget.place(x=x, y=y, width=160, height=32)
+        else:
+            self._widget.place(x=x, y=y)
 
     def _get_prop(self, prop):
         return self._widget.get()
@@ -315,12 +399,18 @@ class GoyaMultiline(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(text=_text(text), x=x, y=y, _value=_text(text))
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkTextbox(form.window, width=200, height=90)
+            self._widget = ctk.CTkTextbox(
+                form.window, width=200, height=90, corner_radius=6, border_width=0,
+                fg_color=C_FIELD, text_color=C_TEXT, font=(FONT, 13))
             self._widget.insert("1.0", _text(text))
         else:
-            self._widget = tk.Text(form.window, width=24, height=4)
+            self._widget = tk.Text(form.window, bg=C_FIELD, fg=C_TEXT, relief="flat",
+                                   highlightthickness=0, font=(FONT, -13))
             self._widget.insert("1.0", _text(text))
-        self._widget.place(x=x, y=y)
+        if BACKEND == "tkinter":
+            self._widget.place(x=x, y=y, width=200, height=90)
+        else:
+            self._widget.place(x=x, y=y)
 
     def _get_prop(self, prop):
         return self._widget.get("1.0", "end").rstrip("\n")
@@ -348,9 +438,15 @@ class GoyaCheckBox(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(text=_text(text), x=x, y=y)
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkCheckBox(form.window, text=_text(text))
+            self._widget = ctk.CTkCheckBox(
+                form.window, text=_text(text), checkbox_width=24, checkbox_height=24,
+                corner_radius=6, border_width=3, fg_color=C_ACCENT,
+                hover_color=C_ACCENT_HOVER, border_color=C_TOGGLE_BORDER,
+                checkmark_color=C_TEXT_ON_ACCENT, text_color=C_TEXT, font=(FONT, 13))
         else:
-            self._widget = tk.Checkbutton(form.window, text=_text(text),
+            self._widget = tk.Checkbutton(form.window, text=_text(text), bg=C_WINDOW,
+                                          fg=C_TEXT, activebackground=C_WINDOW,
+                                          font=(FONT, -13),
                                           command=lambda: self._on_toggle())
         self._widget.place(x=x, y=y)
 
@@ -399,11 +495,15 @@ class GoyaRadio(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(text=_text(text), x=x, y=y)
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkRadioButton(form.window, text=_text(text),
-                                              command=lambda: self.select())
+            self._widget = ctk.CTkRadioButton(
+                form.window, text=_text(text), radiobutton_width=22, radiobutton_height=22,
+                border_width_unchecked=3, border_width_checked=6, fg_color=C_ACCENT,
+                hover_color=C_ACCENT_HOVER, border_color=C_TOGGLE_BORDER,
+                text_color=C_TEXT, font=(FONT, 13), command=lambda: self.select())
         else:
-            self._widget = tk.Radiobutton(form.window, text=_text(text),
-                                          value=_text(text),
+            self._widget = tk.Radiobutton(form.window, text=_text(text), bg=C_WINDOW,
+                                          fg=C_TEXT, activebackground=C_WINDOW,
+                                          font=(FONT, -13), value=_text(text),
                                           command=lambda: self.select())
         self._widget.place(x=x, y=y)
 
@@ -443,9 +543,14 @@ class GoyaSwitch(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(text=_text(text), x=x, y=y)
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkSwitch(form.window, text=_text(text))
+            self._widget = ctk.CTkSwitch(
+                form.window, text=_text(text), switch_width=36, switch_height=18,
+                border_width=3, fg_color=C_TRACK, progress_color=C_ACCENT,
+                button_color=C_KNOB, button_hover_color="#333333",
+                text_color=C_TEXT, font=(FONT, 13))
         else:
-            self._widget = tk.Checkbutton(form.window, text=_text(text), indicatoron=False)
+            self._widget = tk.Checkbutton(form.window, text=_text(text), bg=C_WINDOW,
+                                          fg=C_TEXT, font=(FONT, -13), indicatoron=False)
         self._widget.place(x=x, y=y)
 
     def _get_prop(self, prop):
@@ -487,11 +592,16 @@ class GoyaCombo(GoyaControl):
             self._widget = _DummyWidget(items=list(self._items), x=x, y=y,
                                         _value=self._items[0] if self._items else "")
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkComboBox(form.window, values=list(self._items), width=160)
+            self._widget = ctk.CTkComboBox(
+                form.window, values=list(self._items), width=160, corner_radius=6,
+                border_width=2, fg_color=C_FIELD, border_color=C_BORDER,
+                button_color=C_TRACK, button_hover_color="#6E7174",
+                text_color=C_TEXT, font=(FONT, 13),
+                dropdown_font=(FONT, 13))
             if self._items:
                 self._widget.set(self._items[0])
         else:
-            self._widget = tk.Combobox(form.window, values=self._items, state="readonly")
+            self._widget = _ttk.Combobox(form.window, values=self._items, state="readonly")
             if self._items:
                 self._widget.current(0)
         self._widget.place(x=x, y=y)
@@ -518,6 +628,173 @@ class GoyaCombo(GoyaControl):
                 self._widget.configure(command=lambda v: fn())
 
 
+class GoyaOption(GoyaControl):
+    """منوی گزینه — دکمه‌ای که کلیک رویش فهرست را باز می‌کند (CTkOptionMenu)"""
+    kind = "گزینه‌منو"
+    _PROPS = {"آیتم‌ها": "items", "انتخاب‌شده": "selected"}
+    _EVENTS = ["انتخاب", "تغییر"]
+
+    def __init__(self, form, items, x, y):
+        self.goya_name = None
+        self._select_fn = None
+        self._items = [_text(i) for i in items]
+        if BACKEND == "dummy":
+            self._widget = _DummyWidget(items=list(self._items), x=x, y=y,
+                                        _value=self._items[0] if self._items else "")
+        elif BACKEND == "customtkinter":
+            self._widget = ctk.CTkOptionMenu(
+                form.window, values=list(self._items), width=160, height=28,
+                corner_radius=6, fg_color=C_FIELD, button_color=C_TRACK,
+                button_hover_color="#6E7174", text_color=C_TEXT,
+                font=(FONT, 13), dropdown_font=(FONT, 13),
+                command=lambda v: self._picked())
+            if self._items:
+                self._widget.set(self._items[0])
+        else:
+            self._widget = _ttk.OptionMenu(form.window, None, self._items[0] if self._items else "",
+                                           *self._items)
+        self._widget.place(x=x, y=y)
+
+    def _picked(self):
+        if self._select_fn:
+            self._select_fn()
+
+    def _get_prop(self, prop):
+        if prop == "items":
+            return list(self._items)
+        return self._widget.get()
+
+    def _set_prop(self, prop, value):
+        if prop == "items":
+            self._items = [_text(i) for i in value]
+            if BACKEND == "customtkinter":
+                self._widget.configure(values=list(self._items))
+                if self._items:
+                    self._widget.set(self._items[0])
+        elif BACKEND == "customtkinter":
+            self._widget.set(_text(value))
+
+    def bind_event(self, evt, fn):
+        if evt == "انتخاب":
+            self._select_fn = fn
+            if BACKEND == "customtkinter":
+                self._widget.configure(command=lambda v: fn())
+
+
+class GoyaSegment(GoyaControl):
+    """بخش‌بندی — ردیفی از گزینه‌های تکه‌ای که فقط یکی انتخاب است (CTkSegmentedButton)"""
+    kind = "بخش‌بندی"
+    _PROPS = {"آیتم‌ها": "items", "انتخاب‌شده": "selected"}
+    _EVENTS = ["انتخاب", "تغییر"]
+
+    def __init__(self, form, items, x, y):
+        self.goya_name = None
+        self._select_fn = None
+        self._items = [_text(i) for i in items] or ["یک", "دو"]
+        if BACKEND == "dummy":
+            self._widget = _DummyWidget(items=list(self._items), x=x, y=y,
+                                        _value=self._items[0])
+        elif BACKEND == "customtkinter":
+            self._widget = ctk.CTkSegmentedButton(
+                form.window, values=list(self._items), height=28,
+                font=(FONT, 13), fg_color=C_TRACK, selected_color=C_ACCENT,
+                selected_hover_color=C_ACCENT_HOVER, unselected_color=C_FIELD,
+                text_color=C_TEXT_ON_ACCENT,
+                command=lambda v: self._picked())
+            self._widget.set(self._items[0])
+        else:
+            self._widget = _DummyWidget(items=list(self._items), x=x, y=y, _value=self._items[0])
+        self._widget.place(x=x, y=y)
+
+    def _picked(self):
+        if self._select_fn:
+            self._select_fn()
+
+    def _get_prop(self, prop):
+        if prop == "items":
+            return list(self._items)
+        return self._widget.get()
+
+    def _set_prop(self, prop, value):
+        if prop == "items":
+            self._items = [_text(i) for i in value] or self._items
+            if BACKEND == "customtkinter":
+                self._widget.configure(values=list(self._items))
+                self._widget.set(self._items[0])
+        elif BACKEND == "customtkinter":
+            self._widget.set(_text(value))
+
+    def bind_event(self, evt, fn):
+        if evt == "انتخاب":
+            self._select_fn = fn
+            if BACKEND == "customtkinter":
+                self._widget.configure(command=lambda v: fn())
+
+
+class GoyaSpin(GoyaControl):
+    """اسپینر — ورودی عددی با فلش بالا/پایین"""
+    kind = "اسپینر"
+    _PROPS = {"مقدار": "value", "کمینه": "low", "بیشینه": "high", "گام": "step"}
+    _EVENTS = ["تغییر"]
+
+    def __init__(self, form, low, high, x, y):
+        self.goya_name = None
+        self._change_fn = None
+        self._low, self._high, self._step = int(low), int(high), 1
+        if BACKEND == "dummy":
+            self._widget = _DummyWidget(low=self._low, high=self._high, x=x, y=y,
+                                        _value=str(self._low))
+        elif BACKEND == "customtkinter":
+            self._var = tk.StringVar(value=str(self._low))
+            self._widget = tk.Spinbox(
+                form.window, from_=self._low, to=self._high,
+                increment=self._step, textvariable=self._var, width=9,
+                justify="center", font=(FONT, 13),
+                buttonbackground=C_TRACK, background=C_FIELD,
+                foreground=C_TEXT, insertbackground=C_TEXT,
+                relief="flat", highlightthickness=1,
+                highlightbackground=C_BORDER, highlightcolor=C_ACCENT,
+                command=self._fire)
+        else:
+            self._widget = tk.Spinbox(form.window, from_=self._low, to=self._high)
+        self._widget.place(x=x, y=y)
+
+    def _fire(self):
+        if self._change_fn:
+            self._change_fn()
+
+    def _get_prop(self, prop):
+        if prop == "low":
+            return self._low
+        if prop == "high":
+            return self._high
+        if prop == "step":
+            return self._step
+        return self._widget.get()
+
+    def _set_prop(self, prop, value):
+        if prop == "low":
+            self._low = int(value)
+            if BACKEND == "customtkinter":
+                self._widget.configure(from_=self._low)
+        elif prop == "high":
+            self._high = int(value)
+            if BACKEND == "customtkinter":
+                self._widget.configure(to=self._high)
+        elif prop == "step":
+            self._step = int(value)
+            if BACKEND == "customtkinter":
+                self._widget.configure(increment=self._step)
+        elif BACKEND == "customtkinter":
+            self._var.set(_text(value))
+
+    def bind_event(self, evt, fn):
+        if evt == "تغییر":
+            self._change_fn = fn
+            if BACKEND == "customtkinter":
+                self._widget.configure(command=self._fire)
+
+
 class GoyaList(GoyaControl):
     """لیست انتخابی — آیتم‌ها با کلیک انتخاب می‌شن"""
     kind = "لیست"
@@ -533,7 +810,8 @@ class GoyaList(GoyaControl):
             self._widget = _DummyWidget(items=list(self._items), x=x, y=y)
         else:
             if BACKEND == "customtkinter":
-                self._widget = ctk.CTkScrollableFrame(form.window, width=170, height=110)
+                self._widget = ctk.CTkScrollableFrame(form.window, width=170, height=110,
+                                                      fg_color="#DBDBDB", corner_radius=6)
             else:
                 self._widget = tk.Frame(form.window)
             self._redraw()
@@ -547,10 +825,12 @@ class GoyaList(GoyaControl):
         for item in self._items:
             if BACKEND == "customtkinter":
                 b = ctk.CTkButton(self._widget, text=item, anchor="w",
-                                  fg_color="transparent",
-                                  text_color=("gray10", "#DCE4EE"), height=26)
+                                  fg_color="transparent", hover_color="#CFCFCF",
+                                  text_color=C_TEXT, height=26, corner_radius=4,
+                                  font=(FONT, 13))
             else:
-                b = tk.Button(self._widget, text=item, anchor="w", relief="flat")
+                b = tk.Button(self._widget, text=item, anchor="w", relief="flat",
+                              bg="#DBDBDB", fg=C_TEXT, font=(FONT, -13))
             b.configure(command=lambda it=item, b=b: self._pick(it, b))
             b.pack(fill="x", padx=2, pady=1)
 
@@ -590,12 +870,15 @@ class GoyaSlider(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(low=self._low, high=self._high, x=x, y=y, _value=str(self._low))
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkSlider(form.window, from_=self._low, to=self._high,
-                                         width=160, command=lambda v: self._moved())
+            self._widget = ctk.CTkSlider(
+                form.window, from_=self._low, to=self._high, width=160,
+                fg_color=C_TRACK, progress_color="#666666",
+                button_color=C_ACCENT, button_hover_color=C_ACCENT_HOVER,
+                command=lambda v: self._moved())
             self._widget.set(self._low)
         else:
             self._widget = tk.Scale(form.window, from_=self._low, to=self._high,
-                                    orient="horizontal", length=160,
+                                    orient="horizontal", length=160, showvalue=False,
                                     command=lambda v: self._moved())
         self._widget.place(x=x, y=y)
 
@@ -634,7 +917,8 @@ class GoyaProgress(GoyaControl):
         if BACKEND == "dummy":
             self._widget = _DummyWidget(x=x, y=y)
         elif BACKEND == "customtkinter":
-            self._widget = ctk.CTkProgressBar(form.window, width=180)
+            self._widget = ctk.CTkProgressBar(form.window, width=180,
+                                              fg_color=C_TRACK, progress_color=C_ACCENT)
             self._widget.set(0)
         else:
             self._widget = tk.Frame(form.window)
@@ -796,6 +1080,24 @@ def factory_combo(items, x, y):
     return ctrl
 
 
+def factory_option(items, x, y):
+    ctrl = GoyaOption(_current_form(), items, int(x), int(y))
+    STATE["controls"].append(ctrl)
+    return ctrl
+
+
+def factory_segment(items, x, y):
+    ctrl = GoyaSegment(_current_form(), items, int(x), int(y))
+    STATE["controls"].append(ctrl)
+    return ctrl
+
+
+def factory_spin(low, high, x, y):
+    ctrl = GoyaSpin(_current_form(), low, high, int(x), int(y))
+    STATE["controls"].append(ctrl)
+    return ctrl
+
+
 def factory_list(items, x, y):
     ctrl = GoyaList(_current_form(), items, int(x), int(y))
     STATE["controls"].append(ctrl)
@@ -850,9 +1152,45 @@ def _bind_events(interp):
                 fn = interp.global_env.get(name + "_" + evt)
             except GoyaRuntimeError:
                 continue
-            ctrl.bind_event(evt, lambda fn=fn: interp.call_function(fn, []))
+            ctrl.bind_event(evt, lambda fn=fn, name=name, evt=evt: _safe_event_call(interp, fn, name, evt))
             bound += 1
     return bound
+
+
+_last_event_error = {"key": None}
+
+
+def _safe_event_call(interp, fn, name, evt):
+    """خطای زبانی داخل رویداد → پیام خوانا در خروجی، نه تری‌بک خام پایتون.
+
+    تایمر خراب هر تیک تکرار چاپ نمی‌شود؛ فقط خطای تازه چاپ می‌شود.
+    """
+    try:
+        interp.call_function(fn, [])
+        _last_event_error["key"] = None  # درست شد — خطای بعدی دوباره چاپ می‌شود
+    except GoyaError as e:
+        key = (name, evt, str(e))
+        if _last_event_error["key"] == key:
+            return
+        _last_event_error["key"] = key
+        line = getattr(e, "line", None)
+        where = " (سطر {})".format(_fa_num(line)) if line else ""
+        print("── خطا در رویداد «{}_{}»{}".format(name, evt, where))
+        print(str(e))
+        print()
+    except RecursionError:
+        key = (name, evt, "recursion")
+        if _last_event_error["key"] == key:
+            return
+        _last_event_error["key"] = key
+        print("── خطا در رویداد «{}_{}» ──".format(name, evt))
+        print("تابع‌ها خیلی تو در تو صدا زده شدن (بازگشت بی‌پایان؟)")
+        print()
+
+
+def _fa_num(v):
+    """عدد لاتین → رقم فارسی برای پیام‌ها"""
+    return str(v).translate(str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹"))
 
 
 def finish_gui_if_active(interp):

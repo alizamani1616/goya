@@ -89,6 +89,8 @@ def _merge_phrases(tokens):
 
 class Lexer:
     def __init__(self, source):
+        # BOM ابتدای فایل (خروجی Notepad و برخی ویرایشگرهای ویندوزی) نادیده گرفته می‌شود
+        source = source.lstrip("﻿")
         self.lines = source.splitlines()
         self.tokens = []
         self.indents = [0]

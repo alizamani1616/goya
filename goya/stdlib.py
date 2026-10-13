@@ -263,6 +263,28 @@ def _bi_slider(args):
                           _gui_int(args[2], "x"), _gui_int(args[3], "y"))
 
 
+def _bi_option(args):
+    from .gui import factory_option
+    if len(args) < 3:
+        raise GoyaRuntimeError("گزینه‌منو() سه ورودی می‌خواد: گزینه‌منو(آیتم‌ها، x، y)")
+    return factory_option(_gui_items(args[0], "آیتم‌های گزینه‌منو"), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_segment(args):
+    from .gui import factory_segment
+    if len(args) < 3:
+        raise GoyaRuntimeError("بخش‌بندی() سه ورودی می‌خواد: بخش‌بندی(آیتم‌ها، x، y)")
+    return factory_segment(_gui_items(args[0], "آیتم‌های بخش‌بندی"), _gui_int(args[1], "x"), _gui_int(args[2], "y"))
+
+
+def _bi_spin(args):
+    from .gui import factory_spin
+    if len(args) < 4:
+        raise GoyaRuntimeError("اسپینر() چهار ورودی می‌خواد: اسپینر(کمینه، بیشینه، x، y)")
+    return factory_spin(_gui_int(args[0], "کمینه"), _gui_int(args[1], "بیشینه"),
+                        _gui_int(args[2], "x"), _gui_int(args[3], "y"))
+
+
 def _bi_progress(args):
     from .gui import factory_progress
     if len(args) < 2:
@@ -319,6 +341,9 @@ def install_builtins(env, input_fn=None):
     env.define("رادیو", Builtin("رادیو", _bi_radio))
     env.define("کلید", Builtin("کلید", _bi_switch))
     env.define("کامبو", Builtin("کامبو", _bi_combo))
+    env.define("گزینه‌منو", Builtin("گزینه‌منو", _bi_option))
+    env.define("بخش‌بندی", Builtin("بخش‌بندی", _bi_segment))
+    env.define("اسپینر", Builtin("اسپینر", _bi_spin))
     env.define("لیست", Builtin("لیست", _bi_list))
     env.define("لغزنده", Builtin("لغزنده", _bi_slider))
     env.define("پیشرفت", Builtin("پیشرفت", _bi_progress))

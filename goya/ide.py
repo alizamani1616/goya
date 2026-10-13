@@ -21,6 +21,22 @@ from .lexer import Lexer
 from .parser import Parser
 
 _STATIC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ide_static")
+_STUDIO_STATIC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_static")
+_DIST = os.path.join(_STUDIO_STATIC, "dist")  # نسخه‌ی بیلدشده‌ی استودیو (React)
+
+_ASSET_MIME = {
+    ".js": "text/javascript; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".woff2": "font/woff2",
+    ".woff": "font/woff",
+    ".ttf": "font/ttf",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".wasm": "application/wasm",
+    ".html": "text/html; charset=utf-8",
+    ".txt": "text/plain; charset=utf-8",
+}
 _EXAMPLES_DIR = os.path.abspath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "examples")
 )
@@ -155,11 +171,36 @@ class Handler(BaseHTTPRequestHandler):
             except OSError:
                 self._json({"error": "فایل پیدا نشد"}, 404)
         elif self.path == "/studio":
+            # اسلش انتهایی لازم است تا ./assets/... به /studio/assets برود نه ریشه‌ی سایت
+            self.send_response(302)
+            self.send_header("Location", "/studio/")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+        elif self.path in ("/studio/", "/studio/index.html"):
             try:
-                with open(os.path.join(_STATIC, "..", "studio_static", "studio.html"), "rb") as f:
-                    self._send(200, f.read(), "text/html; charset=utf-8")
+                idx = os.path.join(_DIST, "index.html")
+                if os.path.isfile(idx):
+                    with open(idx, "rb") as f:
+                        self._send(200, f.read(), "text/html; charset=utf-8")
+                else:
+                    with open(os.path.join(_STUDIO_STATIC, "studio.html"), "rb") as f:
+                        self._send(200, f.read(), "text/html; charset=utf-8")
             except OSError:
                 self._json({"error": "صفحه پیدا نشد"}, 500)
+        elif self.path.startswith("/studio/"):
+            # فایل‌های بیلد استودیو (assets، فونت، آیکون) — فقط نام ساده، بدون پیمایش پوشه
+            name = os.path.basename(self.path)
+            sub = "assets" if "/assets/" in self.path else ""
+            target = os.path.join(_DIST, sub, name) if sub else os.path.join(_DIST, name)
+            ctype = _ASSET_MIME.get(os.path.splitext(name)[1].lower())
+            if not ctype or not os.path.isfile(target):
+                self._json({"error": "فایل پیدا نشد"}, 404)
+                return
+            try:
+                with open(target, "rb") as f:
+                    self._send(200, f.read(), ctype)
+            except OSError:
+                self._json({"error": "فایل پیدا نشد"}, 404)
         elif self.path.startswith("/ide_static/"):
             name = os.path.basename(self.path)
             sub = "icons" if "/icons/" in self.path else ""
@@ -177,18 +218,39 @@ class Handler(BaseHTTPRequestHandler):
             self._json({"error": "پیدا نشد"}, 404)
 
     def do_POST(self):
-        if self.path != "/api/run":
+        if self.path == "/api/run":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                code = payload.get("code", "")
+                inputs = payload.get("inputs") or []
+            except (ValueError, UnicodeDecodeError):
+                self._json({"error": "درخواست بد بود"}, 400)
+                return
+            self._json(run_code(code, inputs))
+        elif self.path in ("/api/ai/models", "/api/ai/chat"):
+            # دستیار هوش مصنوعی برای حالت مرورگر — بدون استریم، پاسخ کامل
+            from .ai import AiError, chat_stream, list_models
+
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+            except (ValueError, UnicodeDecodeError):
+                self._json({"error": "درخواست بد بود"}, 400)
+                return
+            base = payload.get("baseUrl", "")
+            key = payload.get("apiKey", "")
+            try:
+                if self.path == "/api/ai/models":
+                    self._json({"models": list_models(base, key)})
+                else:
+                    text = chat_stream(base, key, payload.get("model", ""),
+                                       payload.get("messages") or [], lambda piece: None)
+                    self._json({"text": text})
+            except AiError as e:
+                self._json({"error": str(e)})
+        else:
             self._json({"error": "پیدا نشد"}, 404)
-            return
-        try:
-            length = int(self.headers.get("Content-Length", 0))
-            payload = json.loads(self.rfile.read(length).decode("utf-8"))
-            code = payload.get("code", "")
-            inputs = payload.get("inputs") or []
-        except (ValueError, UnicodeDecodeError):
-            self._json({"error": "درخواست بد بود"}, 400)
-            return
-        self._json(run_code(code, inputs))
 
     def log_message(self, fmt, *args):
         pass  # لاگ پرحجوب اضافه نمی‌خوایم
