@@ -16,7 +16,7 @@ def _try_entry(interp, source):
     """یک ورودی کامل رو اجرا می‌کنه. برمی‌گردونه: تموم شد یا ناتمام بود؟"""
     try:
         tokens = Lexer(source).lex()
-        program = Parser(tokens).parse()
+        program = Parser(tokens, repl=True).parse()
     except IncompleteInput:
         return False
     except GoyaError as e:
@@ -26,7 +26,8 @@ def _try_entry(interp, source):
     try:
         if len(program.statements) == 1 and isinstance(program.statements[0], ExprStmt):
             value = interp.evaluate(program.statements[0].expr)
-            print("=> " + display(value))
+            if value is not None:
+                print("=> " + display(value))
         else:
             interp.run(program)
     except GoyaError as e:
@@ -67,5 +68,8 @@ def start():
         else:
             # چندسطری: با سطر خالی اجرا می‌شه
             if not line.strip():
-                _try_entry(interp, source)
-                buf = []
+                if _try_entry(interp, source):
+                    buf = []
+                else:
+                    buf.pop()  # سطر خالی رو نگه ندار؛ ورودی هنوز ناتمامه
+                    print("بدنه‌ی بلوک ناقصه — سطرهای بدنه رو بنویس (برای لغو: Ctrl+C)")

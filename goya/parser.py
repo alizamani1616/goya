@@ -187,9 +187,12 @@ MUL_OPS = {
 
 
 class Parser:
-    def __init__(self, tokens):
+    def __init__(self, tokens, repl=False):
         self.toks = tokens
         self.i = 0
+        # در REPL بدنه‌ی تابع اجباریه تا سطرهای بعدی ادامه‌ی همون ورودی حساب بشن؛
+        # بیرون REPL بدنه‌ی خالی مجازه (استودیو برای رویدادها استاب خالی می‌سازه).
+        self.repl = repl
 
     # ─── ابزارهای توکن ───
 
@@ -409,7 +412,7 @@ class Parser:
         if not self.eat_op(")"):
             self.error("پرانتز تابع بسته نشده")
         self._allow_colon()
-        body = self._block(tok.line, allow_empty=True)
+        body = self._block(tok.line, allow_empty=not self.repl)
         return FuncDef(name, params, body, tok.line)
 
     def return_statement(self):
